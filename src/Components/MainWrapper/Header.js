@@ -55,7 +55,7 @@ const Header = (props) => {
                 horizontal: 'left',
               }}
             >
-              test
+              test222 marcinMistrz
             </Menu>
           </Grid>
         </Grid>

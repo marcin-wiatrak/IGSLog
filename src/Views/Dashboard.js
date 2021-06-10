@@ -1,11 +1,7 @@
-import MainWrapper from "../Components/MainWrapper/MainWrapper"
+import MainWrapper from '../Components/MainWrapper/MainWrapper';
 
 const Dashboard = () => {
-    return (
-        <MainWrapper>
-            Test
-        </MainWrapper>
-    )
-}
+  return <MainWrapper>Test</MainWrapper>;
+};
 
-export default Dashboard
+export default Dashboard;
