@@ -13,8 +13,8 @@ import {
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import fireDB from '../../Firebase';
-import Statuses from './Statuses';
+import fireDB from '../Firebase';
+import Statuses from './MainWrapper/Statuses';
 import NewOrderModalBody from './NewOrderModalBody';
 
 const useStyles = makeStyles((theme) => ({
