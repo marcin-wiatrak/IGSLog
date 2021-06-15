@@ -17,68 +17,61 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrderDetails = (props) => {
-  const { taskId } = useParams();
+  const { orderId } = useParams();
   const classes = useStyles();
-  const [taskDetail, setTaskDetail] = useState();
+  const [orderDetail, setOrderDetail] = useState();
 
   useEffect(() => {
-    const taskDetailsRef = fireDB.database().ref('Orders');
-    taskDetailsRef.on('value', (snapshot) => {
-      const taskDetailsData = snapshot.val();
-      let taskDetailsArray = [];
-      for (let task in taskDetailsData) {
-        taskDetailsArray.push({ task, ...taskDetailsData[task] });
+    const orderDetailsRef = fireDB.database().ref('Orders');
+    orderDetailsRef.on('value', (snapshot) => {
+      const orderDetailsData = snapshot.val();
+      let orderDetailsArray = [];
+      for (let order in orderDetailsData) {
+        orderDetailsArray.push({ order, ...orderDetailsData[order] });
       }
-      console.log(taskDetailsArray);
-      const singleTaskDetails = taskDetailsArray.find(
-        (task) => task.id === parseInt(taskId)
+      const singleOrderDetails = orderDetailsArray.find(
+        (order) => order.id === parseInt(orderId)
       );
-      setTaskDetail(singleTaskDetails);
+      setOrderDetail(singleOrderDetails);
     });
   }, []);
 
   return (
     <div>
       <MainWrapper>
-        {taskDetail && (
+        {orderDetail && (
           <Paper className={classes.paper}>
             <Typography className={classes.label} variant="body1">
               Zleceniodawca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {taskDetail.customer}
+              {orderDetail.customer}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Sygnatura sprawy
             </Typography>
             <Typography gutterBottom variant="body2">
-              {taskDetail.signature}
+              {orderDetail.signature}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Data utworzenia
             </Typography>
             <Typography gutterBottom variant="body2">
-              {moment(taskDetail.createDate).format('DD-MM-YYYY')}
+              {moment(orderDetail.createDate).format('DD-MM-YYYY')}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Data odbioru
             </Typography>
             <Typography gutterBottom variant="body2">
-              {moment(taskDetail.pickupDate).format('DD-MM-YYYY')}
+              {moment(orderDetail.pickupDate).format('DD-MM-YYYY')}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Odbiorca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {taskDetail.employee}
+              {orderDetail.employee}
             </Typography>
-            <TextField
-              label="dodatkowe informacje"
-              value={taskDetail.notes}
-              onChange={() => {
-                console.log('działa');
-              }}
-            />
+            <TextField label="dodatkowe informacje" value={orderDetail.notes} />
           </Paper>
         )}
       </MainWrapper>
