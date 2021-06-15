@@ -7,6 +7,7 @@ import Fatherhood from './Views/Fatherhood';
 import Login from './Views/Login';
 import Physicochemistry from './Views/Physicochemistry';
 import Toxicology from './Views/Toxicology';
+import AdminPanel from './Views/AdminPanel';
 
 const Root = () => {
   return (
@@ -15,10 +16,19 @@ const Root = () => {
         <Switch>
           <Route exact path="/login" component={Login} />
           <PrivateRoute exact path="/" component={Dashboard} />
-          <PrivateRoute exact path="/ustalanie_ojcostwa" component={Fatherhood} />
+          <PrivateRoute
+            exact
+            path="/ustalanie_ojcostwa"
+            component={Fatherhood}
+          />
           <PrivateRoute exact path="/toksykologia" component={Toxicology} />
-          <PrivateRoute exact path="/fizykochemia" component={Physicochemistry} />
+          <PrivateRoute
+            exact
+            path="/fizykochemia"
+            component={Physicochemistry}
+          />
           <PrivateRoute exact path="/biologia" component={Biology} />
+          <PrivateRoute exact path="/admin" component={AdminPanel} />
         </Switch>
       </Router>
     </AuthProvider>

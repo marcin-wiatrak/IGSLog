@@ -28,7 +28,6 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [iterator, setIterator] = useState();
   const [ordersStore, setOrdersStore] = useState();
   const [modalOpen, setModalOpen] = useState(false);
-  const [filteredList, setFilteredList] = useState([]);
 
   const classes = useStyles();
 

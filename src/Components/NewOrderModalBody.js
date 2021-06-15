@@ -3,7 +3,6 @@ import {
   Button,
   FormGroup,
   TextField,
-  Modal,
   Paper,
   makeStyles,
   IconButton,
@@ -18,7 +17,6 @@ import {
 import moment from 'moment';
 import 'moment/locale/pl';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import fireDB from '../Firebase';
 
 const useStyles = makeStyles((theme) => ({
