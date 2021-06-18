@@ -37,11 +37,8 @@ const Header = (props) => {
           <Grid item />
           <Grid item sm />
           <Grid item>
-            <IconButton>
-              <AccountCircle
-                className={classes.lightIcon}
-                onClick={openUserMenu}
-              />
+            <IconButton onClick={openUserMenu}>
+              <AccountCircle className={classes.lightIcon} />
             </IconButton>
             <IconButton onClick={() => fireDB.auth().signOut()}>
               <PowerSettingsNew className={classes.lightIcon} />
