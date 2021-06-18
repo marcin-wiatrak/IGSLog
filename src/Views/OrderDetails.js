@@ -50,6 +50,13 @@ const OrderDetails = (props) => {
     });
   }, []);
 
+  const updateEditableFields = () => {
+    const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
+    configRef.update({ notes });
+  };
+
+  console.log(orderDetail);
+
   return (
     <div>
       <MainWrapper>
@@ -94,9 +101,7 @@ const OrderDetails = (props) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => {
-                  console.log('działa');
-                }}
+                onClick={updateEditableFields}
               >
                 Zapisz
               </Button>
