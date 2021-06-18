@@ -5,6 +5,7 @@ import Biology from './Views/Biology';
 import Dashboard from './Views/Dashboard';
 import Fatherhood from './Views/Fatherhood';
 import Login from './Views/Login';
+import OrderDetails from './Views/OrderDetails';
 import Physicochemistry from './Views/Physicochemistry';
 import Toxicology from './Views/Toxicology';
 import AdminPanel from './Views/AdminPanel';
@@ -29,6 +30,11 @@ const Root = () => {
           />
           <PrivateRoute exact path="/biologia" component={Biology} />
           <PrivateRoute exact path="/admin" component={AdminPanel} />
+          <PrivateRoute
+            exact
+            path="/zlecenie/:orderId"
+            component={OrderDetails}
+          />
         </Switch>
       </Router>
     </AuthProvider>

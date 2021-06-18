@@ -1,6 +1,5 @@
 import {
   Button,
-  Link,
   makeStyles,
   Paper,
   Table,
@@ -11,6 +10,7 @@ import {
   TableRow,
   Modal,
 } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import fireDB from '../Firebase';
@@ -119,7 +119,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                   <TableCell align="right" padding="checkbox">
                     <Button
                       component={Link}
-                      to={`/szczegoly/${id}`}
+                      to={`/zlecenie/${id}`}
                       color="primary"
                       variant="text"
                       size="small"

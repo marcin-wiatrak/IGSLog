@@ -92,6 +92,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       signature,
       type: tab,
     };
+
     const pushTaskRef = fireDB.database().ref('Orders');
     pushTaskRef.push(task);
     setModalOpen(false);
