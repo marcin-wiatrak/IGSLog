@@ -30,7 +30,7 @@ const Root = () => {
           <PrivateRoute exact path="/biologia" component={Biology} />
           <PrivateRoute
             exact
-            path="/zlecenie/:taskId"
+            path="/zlecenie/:orderId"
             component={OrderDetails}
           />
         </Switch>

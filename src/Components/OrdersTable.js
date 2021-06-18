@@ -124,7 +124,6 @@ const OrdersTable = ({ tab, disableFilter }) => {
                       color="primary"
                       variant="text"
                       size="small"
-                      onClick={() => console.log('działa', id)}
                     >
                       Szczegóły
                     </Button>
