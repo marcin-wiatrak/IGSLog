@@ -5,10 +5,13 @@ import {
   Grid,
   makeStyles,
   Paper,
+  Snackbar,
   TextField,
   Typography,
 } from '@material-ui/core';
 import fireDB from '../Firebase';
+import usersFirebase from '../UsersFirebase';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -34,12 +37,30 @@ const useStyles = makeStyles((theme) => ({
 const AdminPanel = () => {
   const classes = useStyles();
   const [email, setEmail] = useState('');
+  const [emailToResetPassword, setEmailToResetPassword] = useState('');
   const [password, setPassword] = useState('');
+  const [snackbar, setSnackbar] = useState('');
 
-  const handleRegister = async (e) => {
+  const handleRegisterNewAccount = async (e) => {
     e.preventDefault();
     try {
-      await fireDB.auth().createUserWithEmailAndPassword(email, password);
+      await usersFirebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password);
+      setEmail('');
+      setPassword('');
+      setSnackbar('ACC_CREATED');
+    } catch (error) {
+      setSnackbar('ACC_ERROR');
+      console.log('error', error);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    try {
+      await fireDB.auth().sendPasswordResetEmail(emailToResetPassword);
+      setEmailToResetPassword('');
     } catch (error) {
       console.log('error', error);
     }
@@ -53,7 +74,7 @@ const AdminPanel = () => {
             <Typography variant="h5" gutterBottom>
               Tworzenie konta
             </Typography>
-            <form onSubmit={handleRegister}>
+            <form onSubmit={handleRegisterNewAccount}>
               <TextField
                 label="Adres E-mail"
                 size="small"
@@ -81,6 +102,21 @@ const AdminPanel = () => {
         <Grid xs={4} item>
           <Paper square className={classes.paper}>
             <Typography variant="h5">Reset hasła</Typography>
+            <form onSubmit={handleResetPassword}>
+              <TextField
+                label="Adres E-mail"
+                size="small"
+                variant="outlined"
+                value={emailToResetPassword}
+                onChange={(e) => setEmailToResetPassword(e.target.value)}
+                className={classes.input}
+              />
+              <div className={classes.paperFooter}>
+                <Button type="submit" variant="contained" color="primary">
+                  Wyślij email
+                </Button>
+              </div>
+            </form>
           </Paper>
         </Grid>
         <Grid xs={4} item>
@@ -89,6 +125,20 @@ const AdminPanel = () => {
           </Paper>
         </Grid>
       </Grid>
+      <Snackbar
+        open={!!snackbar}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        {snackbar === 'ACC_CREATED' ? (
+          <Alert severity="success">Konto zostało utworzone pomyślnie!</Alert>
+        ) : (
+          <Alert severity="error">
+            Nie udało się utworzyć konta! Konto istnieje lub hasło za krótkie.
+          </Alert>
+        )}
+      </Snackbar>
     </MainWrapper>
   );
 };
