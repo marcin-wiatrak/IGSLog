@@ -5,7 +5,7 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-import { DeviceHub, Face, Eco, Spa } from '@material-ui/icons';
+import { DeviceHub, Face, Eco, Spa, People } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -82,6 +82,17 @@ const SideMenu = () => {
               <Eco />
             </ListItemIcon>
             <ListItemText primary="Biologia" />
+          </ListItem>
+          <ListItem
+            button
+            component={NavLink}
+            to="/zleceniodawcy"
+            activeClassName={classes['Mui-selectedd']}
+          >
+            <ListItemIcon>
+              <People />
+            </ListItemIcon>
+            <ListItemText primary="Zleceniodawcy" />
           </ListItem>
         </List>
       </div>

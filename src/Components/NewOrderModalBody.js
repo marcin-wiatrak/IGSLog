@@ -67,7 +67,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       const customers = snapshot.val();
       const customersList = [];
       for (let item in customers) {
-        customersList.push(customers[item].customerName);
+        customersList.push(customers[item].companyName);
       }
       setCustomers(customersList);
     });
