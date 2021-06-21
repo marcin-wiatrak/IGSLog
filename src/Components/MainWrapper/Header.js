@@ -7,8 +7,9 @@ import {
   Menu,
 } from '@material-ui/core';
 import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
+import { AuthContext } from '../../Auth';
 
 const useStyles = makeStyles((theme) => ({
   lightIcon: {
@@ -18,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
   const classes = useStyles();
+  const { currentUser } = useContext(AuthContext);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -32,14 +34,11 @@ const Header = (props) => {
     <AppBar position="static">
       <Toolbar>
         <Grid container>
-          <Grid item></Grid>
-          <Grid item sm></Grid>
+          <Grid item />
+          <Grid item sm />
           <Grid item>
-            <IconButton>
-              <AccountCircle
-                className={classes.lightIcon}
-                onClick={openUserMenu}
-              />
+            <IconButton onClick={openUserMenu}>
+              <AccountCircle className={classes.lightIcon} />
             </IconButton>
             <IconButton onClick={() => fireDB.auth().signOut()}>
               <PowerSettingsNew className={classes.lightIcon} />
@@ -55,7 +54,7 @@ const Header = (props) => {
                 horizontal: 'left',
               }}
             >
-              test222 marcinMistrz
+              {currentUser.email}
             </Menu>
           </Grid>
         </Grid>
