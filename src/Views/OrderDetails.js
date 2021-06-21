@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
-import { makeStyles, Paper, Typography, TextField } from '@material-ui/core';
+import {
+  makeStyles,
+  Paper,
+  Typography,
+  TextField,
+  Button,
+} from '@material-ui/core';
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
@@ -13,13 +19,20 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
   },
-  button: {},
+  actionFooter: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    borderTop: `1px solid ${theme.palette.grey[400]}`,
+    marginTop: theme.spacing(2),
+    paddingTop: theme.spacing(2),
+  },
 }));
 
 const OrderDetails = (props) => {
   const { orderId } = useParams();
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
+  const [notes, setNotes] = useState();
 
   useEffect(() => {
     const orderDetailsRef = fireDB.database().ref('Orders');
@@ -33,8 +46,16 @@ const OrderDetails = (props) => {
         (order) => order.id === parseInt(orderId)
       );
       setOrderDetail(singleOrderDetails);
+      setNotes(singleOrderDetails.notes);
     });
   }, []);
+
+  const updateEditableFields = () => {
+    const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
+    configRef.update({ notes });
+  };
+
+  console.log(orderDetail);
 
   return (
     <div>
@@ -71,7 +92,20 @@ const OrderDetails = (props) => {
             <Typography gutterBottom variant="body2">
               {orderDetail.employee}
             </Typography>
-            <TextField label="dodatkowe informacje" value={orderDetail.notes} />
+            <TextField
+              label="dodatkowe informacje"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+            <div className={classes.actionFooter}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={updateEditableFields}
+              >
+                Zapisz
+              </Button>
+            </div>
           </Paper>
         )}
       </MainWrapper>

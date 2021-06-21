@@ -8,6 +8,7 @@ import Login from './Views/Login';
 import OrderDetails from './Views/OrderDetails';
 import Physicochemistry from './Views/Physicochemistry';
 import Toxicology from './Views/Toxicology';
+import Customers from './Views/Customers';
 import AdminPanel from './Views/AdminPanel';
 
 const Root = () => {
@@ -29,6 +30,7 @@ const Root = () => {
             component={Physicochemistry}
           />
           <PrivateRoute exact path="/biologia" component={Biology} />
+          <PrivateRoute exact path="/zleceniodawcy" component={Customers} />
           <PrivateRoute exact path="/admin" component={AdminPanel} />
           <PrivateRoute
             exact
