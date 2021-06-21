@@ -40,16 +40,32 @@ const AdminPanel = () => {
   const [emailToResetPassword, setEmailToResetPassword] = useState('');
   const [password, setPassword] = useState('');
   const [snackbar, setSnackbar] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
   const handleRegisterNewAccount = async (e) => {
     e.preventDefault();
     try {
       await usersFirebase
         .auth()
-        .createUserWithEmailAndPassword(email, password);
-      setEmail('');
-      setPassword('');
-      setSnackbar('ACC_CREATED');
+        .createUserWithEmailAndPassword(email, password)
+        .then((data) => {
+          fireDB
+            .database()
+            .ref(`/Users/${data.user.uid}`)
+            .set({
+              firstName,
+              lastName,
+              email,
+            })
+            .then(() => {
+              setEmail('');
+              setPassword('');
+              setFirstName('');
+              setLastName('');
+              setSnackbar('ACC_CREATED');
+            });
+        });
     } catch (error) {
       setSnackbar('ACC_ERROR');
       console.log('error', error);
@@ -89,6 +105,22 @@ const AdminPanel = () => {
                 variant="outlined"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className={classes.input}
+              />
+              <TextField
+                label="Imię"
+                size="small"
+                variant="outlined"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={classes.input}
+              />
+              <TextField
+                label="Nazwisko"
+                size="small"
+                variant="outlined"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className={classes.input}
               />
               <div className={classes.paperFooter}>

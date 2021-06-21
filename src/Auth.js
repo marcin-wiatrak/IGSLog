@@ -16,23 +16,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const currentUserProfileRef = fireDB.database().ref('Users');
-    currentUserProfileRef.on('value', (snapshot) => {
-      const usersProfiles = snapshot.val();
-      let usersProfilesArray = [];
-      for (let userProfileId in usersProfiles) {
-        usersProfilesArray.push({
-          userProfileId,
-          ...usersProfiles[userProfileId],
-        });
-      }
-      if (currentUser) {
-        const currentUserProfileFound = usersProfilesArray.find(
-          (user) => user.id === currentUser.uid
-        );
-        setCurrentUserProfile(currentUserProfileFound);
-      }
-    });
+    if (currentUser) {
+      const currentUserProfileRef = fireDB
+        .database()
+        .ref(`Users/${currentUser.uid}`);
+      currentUserProfileRef.on('value', (snapshot) =>
+        setCurrentUserProfile(snapshot.val())
+      );
+    }
   }, [currentUser]);
 
   if (pending) return <>Loading...</>;

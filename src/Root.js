@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
+import UserProfile from './UserProfile';
 import Biology from './Views/Biology';
 import Dashboard from './Views/Dashboard';
 import Fatherhood from './Views/Fatherhood';
@@ -35,6 +36,7 @@ const Root = () => {
             path="/zlecenie/:orderId"
             component={OrderDetails}
           />
+          <PrivateRoute exact path="/profil" component={UserProfile} />
         </Switch>
       </Router>
     </AuthProvider>
