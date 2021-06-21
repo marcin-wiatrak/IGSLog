@@ -5,7 +5,14 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-import { DeviceHub, Face, Eco, Spa, People, Dashboard } from '@material-ui/icons';
+import {
+  DeviceHub,
+  Face,
+  Eco,
+  Spa,
+  People,
+  Dashboard,
+} from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -93,6 +100,7 @@ const SideMenu = () => {
               <People />
             </ListItemIcon>
             <ListItemText primary="Zleceniodawcy" />
+          </ListItem>
           <ListItem
             button
             component={NavLink}
