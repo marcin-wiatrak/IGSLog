@@ -144,7 +144,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
           iterator={iterator}
           setModalOpen={setModalOpen}
           updateIterator={updateIterator}
-          tab
+          tab={tab}
         />
       </Modal>
     </>
