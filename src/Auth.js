@@ -7,11 +7,26 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserProfile, setCurrentUserProfile] = useState({});
   const [pending, setPending] = useState(true);
+  const [usersList, setUsersList] = useState({});
 
   useEffect(() => {
     fireDB.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
       setPending(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    const usersRef = fireDB.database().ref('Users');
+    usersRef.on('value', (snapshot) => {
+      const usersData = Object.entries(snapshot.val()).reduce(
+        (acc, [id, user]) => {
+          acc[id] = `${user.firstName} ${user.lastName}`;
+          return acc;
+        },
+        {}
+      );
+      setUsersList(usersData);
     });
   }, []);
 
@@ -33,6 +48,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         currentUser,
         currentUserProfile,
+        usersList,
       }}
     >
       {children}

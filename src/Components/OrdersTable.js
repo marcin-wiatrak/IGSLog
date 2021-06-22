@@ -11,11 +11,12 @@ import {
   Modal,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import moment from 'moment';
 import fireDB from '../Firebase';
 import Statuses from './MainWrapper/Statuses';
 import NewOrderModalBody from './NewOrderModalBody';
+import { AuthContext } from '../Auth';
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
@@ -28,6 +29,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [iterator, setIterator] = useState();
   const [ordersStore, setOrdersStore] = useState();
   const [modalOpen, setModalOpen] = useState(false);
+
+  const { usersList } = useContext(AuthContext);
 
   const classes = useStyles();
 
@@ -113,7 +116,9 @@ const OrdersTable = ({ tab, disableFilter }) => {
                     <TableCell style={{ fontSize: 12 }}>
                       {pickupDate && moment(pickupDate).format('DD/MM/YYYY')}
                     </TableCell>
-                    <TableCell style={{ fontSize: 12 }}>{employee}</TableCell>
+                    <TableCell style={{ fontSize: 12 }}>
+                      {usersList[employee]}
+                    </TableCell>
                     <TableCell>
                       <Statuses status={status} docId={docId} />
                     </TableCell>
@@ -144,7 +149,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
           iterator={iterator}
           setModalOpen={setModalOpen}
           updateIterator={updateIterator}
-          tab
+          tab={tab}
         />
       </Modal>
     </>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import {
   Button,
@@ -12,6 +12,7 @@ import {
 import fireDB from '../Firebase';
 import usersFirebase from '../UsersFirebase';
 import { Alert } from '@material-ui/lab';
+import { AuthContext } from '../Auth';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,6 +43,8 @@ const AdminPanel = () => {
   const [snackbar, setSnackbar] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+
+  const { usersList } = useContext(AuthContext);
 
   const handleRegisterNewAccount = async (e) => {
     e.preventDefault();
@@ -153,7 +156,12 @@ const AdminPanel = () => {
         </Grid>
         <Grid xs={4} item>
           <Paper square className={classes.paper}>
-            <Typography variant="h5">Lista pracowników</Typography>
+            <Typography variant="h5">Lista pracowników:</Typography>
+            <div>
+              {Object.entries(usersList).map(([uId, name], index) => (
+                <Typography>{`${index + 1}. ${name}`}</Typography>
+              ))}
+            </div>
           </Paper>
         </Grid>
       </Grid>

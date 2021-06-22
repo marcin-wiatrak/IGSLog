@@ -16,7 +16,8 @@ import {
 } from '@material-ui/pickers';
 import moment from 'moment';
 import 'moment/locale/pl';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from '../Auth';
 import fireDB from '../Firebase';
 
 const useStyles = makeStyles((theme) => ({
@@ -57,6 +58,8 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [customerReset, setCustomerReset] = useState(false);
   const [customers, setCustomers] = useState(['No customers', 'Another']);
 
+  const { usersList, currentUser } = useContext(AuthContext);
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -85,7 +88,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       customer,
       createDate: '' + moment().format(),
       pickupDate: '' + pickupDate,
-      employee: 'user name',
+      employee: currentUser.uid,
       localization,
       status: 'NEW_TASK',
       notes,
