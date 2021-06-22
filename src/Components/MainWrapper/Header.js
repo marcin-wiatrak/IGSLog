@@ -82,7 +82,9 @@ const Header = (props) => {
               <div className={classes.userMenu}>
                 <div
                   className={classes.profilePhoto}
-                >{`${currentUserProfile.firstName[0]}${currentUserProfile.lastName[0]}`}</div>
+                >
+                  {`${currentUserProfile.firstName}${currentUserProfile.lastName}`}
+                </div>
                 <Typography
                   variant="body1"
                   align="center"
@@ -91,7 +93,13 @@ const Header = (props) => {
                 <Typography variant="body2" color="textSecondary">
                   {currentUserProfile.email}
                 </Typography>
-                <Button className={classes.button} component={Link} to={'/profil'} variant="contained" color="primary">
+                <Button
+                  className={classes.button}
+                  component={Link}
+                  to={'/profil'}
+                  variant="contained"
+                  color="primary"
+                >
                   Profil
                 </Button>
               </div>
