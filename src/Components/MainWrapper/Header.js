@@ -55,6 +55,7 @@ const Header = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -79,30 +80,30 @@ const Header = (props) => {
                 horizontal: 'left',
               }}
             >
-              <div className={classes.userMenu}>
-                <div
-                  className={classes.profilePhoto}
-                >
-                  {`${currentUserProfile.firstName}${currentUserProfile.lastName}`}
+              {currentUserProfile && (
+                <div className={classes.userMenu}>
+                  <div className={classes.profilePhoto}>
+                    {currentUserProfile.initials}
+                  </div>
+                  <Typography
+                    variant="body1"
+                    align="center"
+                    gutterBottom
+                  >{`${currentUserProfile.firstName} ${currentUserProfile.lastName}`}</Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    {currentUserProfile.email}
+                  </Typography>
+                  <Button
+                    className={classes.button}
+                    component={Link}
+                    to={'/profil'}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Profil
+                  </Button>
                 </div>
-                <Typography
-                  variant="body1"
-                  align="center"
-                  gutterBottom
-                >{`${currentUserProfile.firstName} ${currentUserProfile.lastName}`}</Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {currentUserProfile.email}
-                </Typography>
-                <Button
-                  className={classes.button}
-                  component={Link}
-                  to={'/profil'}
-                  variant="contained"
-                  color="primary"
-                >
-                  Profil
-                </Button>
-              </div>
+              )}
             </Menu>
           </Grid>
         </Grid>
