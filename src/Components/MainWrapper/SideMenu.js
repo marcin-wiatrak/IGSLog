@@ -5,13 +5,23 @@ import {
   ListItemText,
   makeStyles,
 } from '@material-ui/core';
-import { DeviceHub, Face, Eco, Spa } from '@material-ui/icons';
+import {
+  DeviceHub,
+  Face,
+  Eco,
+  Spa,
+  People,
+  Dashboard,
+  Tune,
+} from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   sideMenu: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
+    padding: '30px 0',
     position: 'absolute',
     left: 0,
     width: '270px',
@@ -39,6 +49,18 @@ const SideMenu = () => {
     <>
       <div className={classes.sideMenu}>
         <List component="nav">
+          <ListItem
+            button
+            component={NavLink}
+            to="/"
+            exact
+            activeClassName={classes['Mui-selectedd']}
+          >
+            <ListItemIcon>
+              <Dashboard />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
           <ListItem
             button
             component={NavLink}
@@ -82,6 +104,30 @@ const SideMenu = () => {
               <Eco />
             </ListItemIcon>
             <ListItemText primary="Biologia" />
+          </ListItem>
+        </List>
+        <List component="nav">
+          <ListItem
+            button
+            component={NavLink}
+            to="/zleceniodawcy"
+            activeClassName={classes['Mui-selectedd']}
+          >
+            <ListItemIcon>
+              <People />
+            </ListItemIcon>
+            <ListItemText primary="Zleceniodawcy" />
+          </ListItem>
+          <ListItem
+            button
+            component={NavLink}
+            to="/admin"
+            activeClassName={classes['Mui-selectedd']}
+          >
+            <ListItemIcon>
+              <Tune />
+            </ListItemIcon>
+            <ListItemText primary="Administracja" />
           </ListItem>
         </List>
       </div>

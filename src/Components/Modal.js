@@ -10,7 +10,7 @@ import moment from 'moment';
 import 'moment/locale/pl';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import fireDB from '../../Firebase';
+import fireDB from '../Firebase';
 
 const Wrapper = styled.div`
   height: 100%;

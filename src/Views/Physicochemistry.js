@@ -1,5 +1,5 @@
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
-import OrdersTable from '../Components/MainWrapper/OrdersTable';
+import OrdersTable from '../Components/OrdersTable';
 
 const Physicochemistry = () => {
   return (
