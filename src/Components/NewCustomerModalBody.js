@@ -1,8 +1,6 @@
 import {
   Button,
-  FormGroup,
   TextField,
-  Modal,
   Paper,
   makeStyles,
   IconButton,
@@ -48,7 +46,7 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [customerReset, setCustomerReset] = useState(false);
-  const [customers, setCustomers] = useState(['No customers', 'Another']);
+  const [customers, setCustomers] = useState([]);
 
   const classes = useStyles();
 

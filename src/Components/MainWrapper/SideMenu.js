@@ -12,6 +12,7 @@ import {
   Spa,
   People,
   Dashboard,
+  Tune,
 } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 
@@ -19,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
   sideMenu: {
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'space-between',
+    padding: '30px 0',
     position: 'absolute',
     left: 0,
     width: '270px',
@@ -46,6 +49,18 @@ const SideMenu = () => {
     <>
       <div className={classes.sideMenu}>
         <List component="nav">
+          <ListItem
+            button
+            component={NavLink}
+            to="/"
+            exact
+            activeClassName={classes['Mui-selectedd']}
+          >
+            <ListItemIcon>
+              <Dashboard />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
           <ListItem
             button
             component={NavLink}
@@ -90,6 +105,8 @@ const SideMenu = () => {
             </ListItemIcon>
             <ListItemText primary="Biologia" />
           </ListItem>
+        </List>
+        <List component="nav">
           <ListItem
             button
             component={NavLink}
@@ -108,7 +125,7 @@ const SideMenu = () => {
             activeClassName={classes['Mui-selectedd']}
           >
             <ListItemIcon>
-              <Dashboard />
+              <Tune />
             </ListItemIcon>
             <ListItemText primary="Administracja" />
           </ListItem>

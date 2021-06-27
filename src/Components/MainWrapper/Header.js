@@ -13,6 +13,7 @@ import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
 import { AuthContext } from '../../Auth';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
   lightIcon: {
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = (props) => {
+const Header = () => {
   const classes = useStyles();
   const { currentUserProfile } = useContext(AuthContext);
 
@@ -60,7 +61,13 @@ const Header = (props) => {
     <AppBar position="static">
       <Toolbar>
         <Grid container>
-          <Grid item />
+          <Grid item>
+            <Typography>
+              {moment(localStorage.getItem('logoutTime')).format(
+                'YYYY-MM-DD HH:mm'
+              )}
+            </Typography>
+          </Grid>
           <Grid item sm />
           <Grid item>
             <IconButton onClick={openUserMenu}>

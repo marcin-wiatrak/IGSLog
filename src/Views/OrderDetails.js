@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const OrderDetails = (props) => {
+const OrderDetails = () => {
   const { orderId } = useParams();
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
@@ -57,8 +57,6 @@ const OrderDetails = (props) => {
     const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
     configRef.update({ notes });
   };
-
-  // console.log(orderDetail);
 
   return (
     <div>

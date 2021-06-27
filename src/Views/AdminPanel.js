@@ -60,6 +60,7 @@ const AdminPanel = () => {
               firstName,
               lastName,
               email,
+              initials: `${firstName[0]}${lastName[0]}`,
             })
             .then(() => {
               setEmail('');
@@ -71,7 +72,6 @@ const AdminPanel = () => {
         });
     } catch (error) {
       setSnackbar('ACC_ERROR');
-      console.log('error', error);
     }
   };
 
