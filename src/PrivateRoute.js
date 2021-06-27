@@ -14,7 +14,10 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
         if (logoutTime < moment().format() && currentUser) {
           fireDB.auth().signOut();
         }
-        localStorage.setItem('logoutTime', moment().add(5, 'seconds').format());
+        localStorage.setItem(
+          'logoutTime',
+          moment().add(20, 'minutes').format()
+        );
         return !!currentUser ? (
           <RouteComponent {...routeProps} />
         ) : (
