@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = ({ history }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -46,7 +46,6 @@ const Login = ({ history }) => {
     e.preventDefault();
     try {
       await fireDB.auth().signInWithEmailAndPassword(email, password);
-      history.push('/');
     } catch (error) {
       error.code.includes('too-many-requests')
         ? setLoginError(
@@ -76,7 +75,7 @@ const Login = ({ history }) => {
             value={email}
             onKeyDown={() => loginError && setLoginError('')}
             onChange={(e) => setEmail(e.target.value)}
-            error={loginError}
+            error={!!loginError}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -90,7 +89,7 @@ const Login = ({ history }) => {
             type="password"
             placeholder="Hasło"
             size="small"
-            error={loginError}
+            error={!!loginError}
             value={password}
             onKeyDown={() => loginError && setLoginError('')}
             onChange={(e) => setPassword(e.target.value)}

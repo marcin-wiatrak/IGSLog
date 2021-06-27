@@ -11,13 +11,21 @@ import Physicochemistry from './Views/Physicochemistry';
 import Toxicology from './Views/Toxicology';
 import Customers from './Views/Customers';
 import AdminPanel from './Views/AdminPanel';
+import React from 'react';
 
 const Root = () => {
   return (
     <AuthProvider>
       <Router>
         <Switch>
-          <Route exact path="/login" component={Login} />
+          <Route
+            exact
+            path="/login"
+            render={() => {
+              localStorage.clear();
+              return <Login />;
+            }}
+          />
           <PrivateRoute exact path="/" component={Dashboard} />
           <PrivateRoute
             exact

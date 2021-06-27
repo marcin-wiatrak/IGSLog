@@ -1,7 +1,10 @@
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
+import { Button } from '@material-ui/core';
 
-const Dashboard = () => {
-  return <MainWrapper>Test</MainWrapper>;
-};
+const Dashboard = () => (
+  <MainWrapper>
+    <Button>check</Button>
+  </MainWrapper>
+);
 
 export default Dashboard;
