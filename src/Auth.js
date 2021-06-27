@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserProfile, setCurrentUserProfile] = useState({});
   const [pending, setPending] = useState(true);
+  const [usersList, setUsersList] = useState({});
 
   useEffect(() => {
     fireDB.auth().onAuthStateChanged((user) => {
@@ -16,23 +17,28 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const currentUserProfileRef = fireDB.database().ref('Users');
-    currentUserProfileRef.on('value', (snapshot) => {
-      const usersProfiles = snapshot.val();
-      let usersProfilesArray = [];
-      for (let userProfileId in usersProfiles) {
-        usersProfilesArray.push({
-          userProfileId,
-          ...usersProfiles[userProfileId],
-        });
-      }
-      if (currentUser) {
-        const currentUserProfileFound = usersProfilesArray.find(
-          (user) => user.id === currentUser.uid
-        );
-        setCurrentUserProfile(currentUserProfileFound);
-      }
+    const usersRef = fireDB.database().ref('Users');
+    usersRef.on('value', (snapshot) => {
+      const usersData = Object.entries(snapshot.val()).reduce(
+        (acc, [id, user]) => {
+          acc[id] = `${user.firstName} ${user.lastName}`;
+          return acc;
+        },
+        {}
+      );
+      setUsersList(usersData);
     });
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      const currentUserProfileRef = fireDB
+        .database()
+        .ref(`Users/${currentUser.uid}`);
+      currentUserProfileRef.on('value', (snapshot) =>
+        setCurrentUserProfile(snapshot.val())
+      );
+    }
   }, [currentUser]);
 
   if (pending) return <>Loading...</>;
@@ -42,6 +48,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         currentUser,
         currentUserProfile,
+        usersList,
       }}
     >
       {children}

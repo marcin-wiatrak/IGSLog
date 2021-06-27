@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { AuthProvider } from './Auth';
 import PrivateRoute from './PrivateRoute';
+import UserProfile from './UserProfile';
 import Biology from './Views/Biology';
 import Dashboard from './Views/Dashboard';
 import Fatherhood from './Views/Fatherhood';
@@ -8,13 +9,23 @@ import Login from './Views/Login';
 import OrderDetails from './Views/OrderDetails';
 import Physicochemistry from './Views/Physicochemistry';
 import Toxicology from './Views/Toxicology';
+import Customers from './Views/Customers';
+import AdminPanel from './Views/AdminPanel';
+import React from 'react';
 
 const Root = () => {
   return (
     <AuthProvider>
       <Router>
         <Switch>
-          <Route exact path="/login" component={Login} />
+          <Route
+            exact
+            path="/login"
+            render={() => {
+              localStorage.clear();
+              return <Login />;
+            }}
+          />
           <PrivateRoute exact path="/" component={Dashboard} />
           <PrivateRoute
             exact
@@ -28,11 +39,14 @@ const Root = () => {
             component={Physicochemistry}
           />
           <PrivateRoute exact path="/biologia" component={Biology} />
+          <PrivateRoute exact path="/zleceniodawcy" component={Customers} />
+          <PrivateRoute exact path="/admin" component={AdminPanel} />
           <PrivateRoute
             exact
-            path="/zlecenie/:taskId"
+            path="/zlecenie/:orderId"
             component={OrderDetails}
           />
+          <PrivateRoute exact path="/profil" component={UserProfile} />
         </Switch>
       </Router>
     </AuthProvider>
