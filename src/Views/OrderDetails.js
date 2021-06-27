@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router';
 import {
   makeStyles,
@@ -10,6 +10,7 @@ import {
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
+import { AuthContext } from '../Auth';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -33,6 +34,8 @@ const OrderDetails = () => {
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
   const [notes, setNotes] = useState();
+
+  const { usersList } = useContext(AuthContext);
 
   useEffect(() => {
     const orderDetailsRef = fireDB.database().ref('Orders');
@@ -88,7 +91,7 @@ const OrderDetails = () => {
               Odbiorca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {orderDetail.employee}
+              {usersList[orderDetail.employee]}
             </Typography>
             <TextField
               label="dodatkowe informacje"
