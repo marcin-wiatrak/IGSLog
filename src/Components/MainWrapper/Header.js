@@ -63,9 +63,9 @@ const Header = () => {
         <Grid container>
           <Grid item>
             <Typography>
-              {moment(localStorage.getItem('logoutTime')).format(
-                'YYYY-MM-DD HH:mm'
-              )}
+              {`Sesja aktywna do: ${moment(
+                localStorage.getItem('logoutTime')
+              ).format('YYYY-MM-DD HH:mm')}`}
             </Typography>
           </Grid>
           <Grid item sm />
