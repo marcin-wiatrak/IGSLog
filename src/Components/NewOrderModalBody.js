@@ -1,5 +1,4 @@
 import MomentUtils from '@date-io/moment';
-import { faClosedCaptioning } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
   FormGroup,
@@ -9,8 +8,8 @@ import {
   IconButton,
   Typography,
   Modal,
+  LinearProgress,
 } from '@material-ui/core';
-import { blue } from '@material-ui/core/colors';
 import { CloseRounded } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 import {
@@ -21,7 +20,7 @@ import moment from 'moment';
 import 'moment/locale/pl';
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../Auth';
-import fireDB from '../Firebase';
+import fireDB, { storage } from '../Firebase';
 import NewCustomerModalBody from './NewCustomerModalBody';
 
 const useStyles = makeStyles((theme) => ({
@@ -65,6 +64,9 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [customerReset, setCustomerReset] = useState(false);
   const [customers, setCustomers] = useState(['No customers', 'Another']);
   const [createCustomerModal, setCreateCustomerModal] = useState(false);
+  const [file, setFile] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [attachmentLink, setAttachmentLink] = useState('');
 
   const { currentUser } = useContext(AuthContext);
 
@@ -90,7 +92,42 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
     setNotes('');
   };
 
-  const createTaskHandler = () => {
+  const uploadFile = (e) => {
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const fileUploadClear = () => {
+    setFile('');
+  };
+
+  const handleUpload = () => {
+    const uploadTask = storage.ref(`files/${file.name}`).put(file);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        storage
+          .ref('files')
+          .child(file.name)
+          .getDownloadURL()
+          .then((url) => {
+            setAttachmentLink(url);
+          });
+      }
+    );
+  };
+
+  const createTaskHandler = async () => {
     const task = {
       id: iterator,
       customer,
@@ -102,8 +139,8 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       notes,
       signature,
       type: tab,
+      attachmentLink,
     };
-
     const pushTaskRef = fireDB.database().ref('Orders');
     pushTaskRef.push(task);
     setModalOpen(false);
@@ -198,6 +235,29 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
+        <Typography variant="subtitle1" color="textSecondary">
+          Dodaj załącznik
+        </Typography>
+        <Button variant="contained" component="label" fullWidth>
+          Wybierz plik
+          <input type="file" hidden onChange={uploadFile} key={file.name}/>
+        </Button>
+        {file && (
+          <>
+            <Typography variant="caption">Wybrany plik: {file.name}</Typography>
+            <LinearProgress variant="determinate" value={uploadProgress} />
+            <div>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleUpload}
+              >
+                Wgraj plik
+              </Button>
+              <Button onClick={fileUploadClear}>Anuluj</Button>
+            </div>
+          </>
+        )}
         <div className={classes.modalFooter}>
           <Button variant="contained" onClick={resetForm}>
             Wyczyść formularz
@@ -206,8 +266,11 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             color="primary"
             variant="contained"
             onClick={createTaskHandler}
+            disabled={!!file.name && uploadProgress !== 100}
           >
-            Dodaj zlecenie
+            {!!file.name && uploadProgress !== 100
+              ? 'Najpierw wyślij plik'
+              : 'Dodaj zlecenie'}
           </Button>
         </div>
       </Paper>

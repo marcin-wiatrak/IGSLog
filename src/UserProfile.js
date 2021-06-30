@@ -5,11 +5,11 @@ import {
   Modal,
   Paper,
   makeStyles,
-  Snackbar,
+  Snackbar, CircularProgress
 } from '@material-ui/core';
 import { useContext, useState } from 'react';
 import { AuthContext } from './Auth';
-import fireDB from './Firebase';
+import fireDB, { storage } from './Firebase';
 import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
@@ -50,22 +50,22 @@ const UserProfile = () => {
         <Button onClick={() => setConfirmationModalOpen(true)}>
           Zmiana hasła
         </Button>
-        <Snackbar
-          open={!!snackbar}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          onClose={() => setSnackbar('')}
-          autoHideDuration={6000}
-        >
-          {snackbar === 'OK' && (
-            <Alert severity="success">
-              Mail resetujący hasło został wysłany na Twój adres email!
-            </Alert>
-          )}
-        </Snackbar>
       </MainWrapper>
+      <Snackbar
+        open={!!snackbar}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        onClose={() => setSnackbar('')}
+        autoHideDuration={6000}
+      >
+        {snackbar === 'OK' && (
+          <Alert severity="success">
+            Mail resetujący hasło został wysłany na Twój adres email!
+          </Alert>
+        )}
+      </Snackbar>
       <Modal
         open={confirmationModalOpen}
         onClose={() => setConfirmationModalOpen(false)}
