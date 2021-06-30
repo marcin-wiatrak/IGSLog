@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Tooltip } from '@material-ui/core';
 import {
   AssignmentTurnedIn,
   NewReleases,
@@ -70,26 +70,36 @@ const Statuses = ({ status, docId }) => {
   const classes = useStyles();
   return (
     <div className={classes.statusWrapper}>
-      <NewReleases
-        onClick={() => changeStatusHandler('NEW_TASK', docId)}
-        className={`${status === 'NEW_TASK' ? classes.newTask : ''}`}
-      />
-      <Sync
-        onClick={() => changeStatusHandler('ACCEPTED', docId)}
-        className={`${status === 'ACCEPTED' ? classes.accepted : ''}`}
-      />
-      <FlightTakeoff
-        onClick={() => changeStatusHandler('PICKED_UP', docId)}
-        className={`${status === 'PICKED_UP' ? classes.pickedUp : ''}`}
-      />
-      <FlightLand
-        onClick={() => changeStatusHandler('DELIVERED', docId)}
-        className={`${status === 'DELIVERED' ? classes.delivered : ''}`}
-      />
-      <AssignmentTurnedIn
-        onClick={() => changeStatusHandler('CLOSED', docId)}
-        className={`${status === 'CLOSED' ? classes.closed : ''}`}
-      />
+      <Tooltip title="ZAREJESTROWANE">
+        <NewReleases
+          onClick={() => changeStatusHandler('NEW_TASK', docId)}
+          className={`${status === 'NEW_TASK' ? classes.newTask : ''}`}
+        />
+      </Tooltip>
+      <Tooltip title="W TRAKCIE REALIZACJI">
+        <Sync
+          onClick={() => changeStatusHandler('ACCEPTED', docId)}
+          className={`${status === 'ACCEPTED' ? classes.accepted : ''}`}
+        />
+      </Tooltip>
+      <Tooltip title="ODBIÓR USTALONY">
+        <FlightTakeoff
+          onClick={() => changeStatusHandler('PICKED_UP', docId)}
+          className={`${status === 'PICKED_UP' ? classes.pickedUp : ''}`}
+        />
+      </Tooltip>
+      <Tooltip title="DOSTARCZONE">
+        <FlightLand
+          onClick={() => changeStatusHandler('DELIVERED', docId)}
+          className={`${status === 'DELIVERED' ? classes.delivered : ''}`}
+        />
+      </Tooltip>
+      <Tooltip title="MATERIAŁ PRZEKAZANY NA DZIAŁ">
+        <AssignmentTurnedIn
+          onClick={() => changeStatusHandler('CLOSED', docId)}
+          className={`${status === 'CLOSED' ? classes.closed : ''}`}
+        />
+      </Tooltip>
     </div>
   );
 };

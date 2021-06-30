@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: '30px 0',
-    position: 'absolute',
+    position: 'fixed',
     left: 0,
     width: '270px',
     height: '100%',
