@@ -16,7 +16,7 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
         }
         localStorage.setItem(
           'logoutTime',
-          moment().add(20, 'minutes').format()
+          moment().add(30, 'minutes').format()
         );
         return !!currentUser ? (
           <RouteComponent {...routeProps} />
