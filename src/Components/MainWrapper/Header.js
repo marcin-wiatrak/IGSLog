@@ -14,7 +14,7 @@ import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
 import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
 import { AuthContext } from '../../Auth';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
