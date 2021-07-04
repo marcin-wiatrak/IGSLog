@@ -240,7 +240,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
         </Typography>
         <Button variant="contained" component="label" fullWidth>
           Wybierz plik
-          <input type="file" hidden onChange={uploadFile} key={file.name}/>
+          <input type="file" hidden onChange={uploadFile} key={file.name} />
         </Button>
         {file && (
           <>
