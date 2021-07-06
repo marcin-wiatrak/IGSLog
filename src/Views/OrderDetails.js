@@ -6,11 +6,14 @@ import {
   Typography,
   TextField,
   Button,
+  IconButton,
+  Snackbar,
 } from '@material-ui/core';
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { AuthContext } from '../Auth';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -34,6 +37,7 @@ const OrderDetails = () => {
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
   const [notes, setNotes] = useState();
+  const [saveNotes, setSaveNotes] = useState(false);
 
   const { usersList } = useContext(AuthContext);
 
@@ -102,13 +106,29 @@ const OrderDetails = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={updateEditableFields}
+                onClick={() => {
+                  updateEditableFields();
+                  setSaveNotes(true);
+                }}
               >
                 Zapisz
               </Button>
             </div>
           </Paper>
         )}
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={saveNotes}
+          onClose={() => setSaveNotes(false)}
+          autoHideDuration={6000}
+        >
+          {saveNotes === true ? (
+            <Alert severity="success">Zmiany zostały pomyślnie zapisane!</Alert>
+          ) : null}
+        </Snackbar>
       </MainWrapper>
     </div>
   );

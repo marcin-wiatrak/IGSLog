@@ -7,6 +7,8 @@ import {
   Menu,
   Typography,
   Button,
+  Modal,
+  Paper,
 } from '@material-ui/core';
 import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
 import { useContext, useState } from 'react';
@@ -41,6 +43,14 @@ const useStyles = makeStyles((theme) => ({
   button: {
     marginTop: theme.spacing(2),
   },
+  paper: {
+    width: '500px',
+    position: 'absolute',
+    transform: 'translate(-50%, -50%)',
+    top: '50%',
+    left: '50%',
+    padding: theme.spacing(3),
+  },
 }));
 
 const Header = () => {
@@ -48,6 +58,8 @@ const Header = () => {
   const { currentUserProfile } = useContext(AuthContext);
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const [logoutTime, setLogoutTime] = useState('30');
+  const [modalOpen, setModalOpen] = useState(false);
 
   const openUserMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,15 +69,25 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  setInterval(() => {
+    const difference = moment(localStorage.getItem('logoutTime')).diff(
+      moment()
+    );
+    const duration = moment.duration(difference).minutes();
+    if (duration < 0) {
+      setModalOpen(true);
+    } else if (duration >= 0) {
+      setLogoutTime(duration);
+    }
+  }, 1000);
+
   return (
     <AppBar position="static">
       <Toolbar>
         <Grid container>
           <Grid item>
             <Typography>
-              {moment(localStorage.getItem('logoutTime')).format(
-                'YYYY-MM-DD HH:mm'
-              )}
+              {`Wylogowanie nastąpi za ${logoutTime} minut`}
             </Typography>
           </Grid>
           <Grid item sm />
@@ -115,6 +137,24 @@ const Header = () => {
           </Grid>
         </Grid>
       </Toolbar>
+      <Modal open={modalOpen} disableBackdropClick>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" gutterBottom>
+            Zostałeś wylogowany
+          </Typography>
+          <Typography variant="body1">
+            Ze względu na zbyt długą nieaktywność nastąpiło wylogowanie
+          </Typography>
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            onClick={() => window.location.reload()}
+          >
+            ZALOGUJ PONOWNIE
+          </Button>
+        </Paper>
+      </Modal>
     </AppBar>
   );
 };

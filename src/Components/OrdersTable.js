@@ -83,7 +83,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
               <TableCell>DATA UTWORZENIA</TableCell>
               <TableCell>DATA ODBIORU</TableCell>
               <TableCell>ODBIORCA</TableCell>
-              <TableCell>STATUS</TableCell>
+              <TableCell>STATUS ZLECENIA</TableCell>
               <TableCell padding="none" />
             </TableRow>
           </TableHead>

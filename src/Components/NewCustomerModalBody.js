@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
+const NewCustomerModalBody = ({ setModalOpen }) => {
   const [address, setAddress] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [customerName, setCustomerName] = useState('');
@@ -80,13 +80,13 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
 
     const pushCustomerRef = fireDB.database().ref('Customers');
     pushCustomerRef.push(customer);
-    setCreateCustomerModal(false);
+    setModalOpen(false);
   };
 
   return (
     <Paper className={classes.modalWrapper} square>
       <IconButton
-        onClick={() => setCreateCustomerModal(false)}
+        onClick={() => setModalOpen(false)}
         size="small"
         className={classes.closeButton}
       >

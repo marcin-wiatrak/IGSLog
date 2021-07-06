@@ -1,8 +1,9 @@
 import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/database';
+import 'firebase/storage';
 
-const fireDB = firebase.initializeApp({
+const firebaseConfig = {
   apiKey: 'AIzaSyDhgtW6nrmJGXXcOTDZHZnzvBWbgrtk1yM',
   authDomain: 'igs-devdb.firebaseapp.com',
   databaseURL:
@@ -11,6 +12,10 @@ const fireDB = firebase.initializeApp({
   storageBucket: 'igs-devdb.appspot.com',
   messagingSenderId: '1070129629009',
   appId: '1:1070129629009:web:782af395fc6573a192b570',
-});
+};
+
+const fireDB = firebase.initializeApp(firebaseConfig);
+
+export const storage = firebase.storage();
 
 export default fireDB;
