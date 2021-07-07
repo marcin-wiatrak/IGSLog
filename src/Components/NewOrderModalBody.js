@@ -280,10 +280,12 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
         onClose={() => setCreateCustomerModal(false)}
         disableBackdropClick
       >
-        <NewCustomerModalBody
-          createCustomerModal={createCustomerModal}
-          setCreateCustomerModal={setCreateCustomerModal}
-        />
+        <>
+          <NewCustomerModalBody
+            createCustomerModal={createCustomerModal}
+            setCreateCustomerModal={setCreateCustomerModal}
+          />
+        </>
       </Modal>
     </>
   );

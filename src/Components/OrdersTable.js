@@ -1,5 +1,6 @@
 import {
   Button,
+  IconButton,
   makeStyles,
   Paper,
   Table,
@@ -17,11 +18,19 @@ import fireDB from '../Firebase';
 import Statuses from './MainWrapper/Statuses';
 import NewOrderModalBody from './NewOrderModalBody';
 import { AuthContext } from '../Auth';
+import { AttachFile, Info } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
     display: 'flex',
     margin: theme.spacing(3),
+  },
+  table: {
+    overflowX: 'auto',
+  },
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
 
@@ -64,7 +73,12 @@ const OrdersTable = ({ tab, disableFilter }) => {
 
   return (
     <>
-      <TableContainer component={Paper} style={{ padding: 16 }} square>
+      <TableContainer
+        component={Paper}
+        style={{ padding: 16 }}
+        className={classes.table}
+        square
+      >
         <div className={classes.controlsWrapper}>
           <Button
             variant="contained"
@@ -74,7 +88,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
             Nowe zlecenie
           </Button>
         </div>
-        <Table size="small">
+        <Table size="small" className={classes.table}>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
@@ -105,6 +119,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                   pickupDate,
                   employee,
                   status,
+                  attachmentLink,
                 }) => (
                   <TableRow key={id}>
                     <TableCell style={{ fontSize: 12 }}>{id}</TableCell>
@@ -123,15 +138,28 @@ const OrdersTable = ({ tab, disableFilter }) => {
                       <Statuses status={status} docId={docId} />
                     </TableCell>
                     <TableCell align="right" padding="checkbox">
-                      <Button
-                        component={Link}
-                        to={`/zlecenie/${id}`}
-                        color="primary"
-                        variant="text"
-                        size="small"
-                      >
-                        Szczegóły
-                      </Button>
+                      <div className={classes.actions}>
+                        <IconButton
+                          component="a"
+                          href={attachmentLink}
+                          size="small"
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          disabled={!!attachmentLink}
+                        >
+                          <AttachFile
+                            fontSize="small"
+                            color={!!attachmentLink ? 'secondary' : 'disabled'}
+                          />
+                        </IconButton>
+                        <IconButton
+                          component={Link}
+                          to={`/zlecenie/${id}`}
+                          size="small"
+                        >
+                          <Info color="primary" />
+                        </IconButton>
+                      </div>
                     </TableCell>
                   </TableRow>
                 )
@@ -145,12 +173,14 @@ const OrdersTable = ({ tab, disableFilter }) => {
         onClose={() => setModalOpen(false)}
         disableBackdropClick
       >
-        <NewOrderModalBody
-          iterator={iterator}
-          setModalOpen={setModalOpen}
-          updateIterator={updateIterator}
-          tab={tab}
-        />
+        <>
+          <NewOrderModalBody
+            iterator={iterator}
+            setModalOpen={setModalOpen}
+            updateIterator={updateIterator}
+            tab={tab}
+          />
+        </>
       </Modal>
     </>
   );

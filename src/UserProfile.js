@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import { useContext, useState } from 'react';
 import { AuthContext } from './Auth';
-import fireDB, { storage } from './Firebase';
+import fireDB from './Firebase';
 import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,34 +43,6 @@ const UserProfile = () => {
     }
   };
 
-  const ModalBody = () => (
-    <Paper className={classes.paper}>
-      <Typography variant="h5" gutterBottom>
-        Resetowanie hasła
-      </Typography>
-      <Typography variant="body1">
-        Na Twój adres email: {`${currentUserProfile.email}`} zostanie wysłany
-        link resetujący hasło.
-      </Typography>
-      <div className={classes.modalFooter}>
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={handleResetPassword}
-        >
-          POTWIERDŹ
-        </Button>
-        <Button
-          onClick={() => {
-            setConfirmationModalOpen(false);
-          }}
-        >
-          ANULUJ
-        </Button>
-      </div>
-    </Paper>
-  );
-
   return (
     <>
       <MainWrapper>
@@ -88,18 +60,40 @@ const UserProfile = () => {
         onClose={() => setSnackbar('')}
         autoHideDuration={6000}
       >
-        {snackbar === 'OK' && (
-          <Alert severity="success">
-            Mail resetujący hasło został wysłany na Twój adres email!
-          </Alert>
-        )}
+        <Alert severity="success">
+          Mail resetujący hasło został wysłany na Twój adres email!
+        </Alert>
       </Snackbar>
       <Modal
         open={confirmationModalOpen}
         onClose={() => setConfirmationModalOpen(false)}
         disableBackdropClick
       >
-        {ModalBody}
+        <Paper className={classes.paper}>
+          <Typography variant="h5" gutterBottom>
+            Resetowanie hasła
+          </Typography>
+          <Typography variant="body1">
+            Na adres {`${currentUserProfile.email}`} zostanie wysłany link
+            resetujący hasło.
+          </Typography>
+          <div className={classes.modalFooter}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleResetPassword}
+            >
+              POTWIERDŹ
+            </Button>
+            <Button
+              onClick={() => {
+                setConfirmationModalOpen(false);
+              }}
+            >
+              ANULUJ
+            </Button>
+          </div>
+        </Paper>
       </Modal>
     </>
   );
