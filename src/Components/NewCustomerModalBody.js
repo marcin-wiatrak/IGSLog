@@ -101,14 +101,14 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
       </div>
       <div className={classes.modalContent}>
         <TextField
-          label="Adres zleceniodawcy"
+          label="Adres zleceniodawcy *"
           fullWidth
           margin="normal"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
         />
         <TextField
-          label="Nazwa firmy"
+          label="Nazwa firmy *"
           value={companyName}
           fullWidth
           margin="normal"
@@ -137,6 +137,7 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
           color="primary"
           variant="contained"
           onClick={createCustomerHandler}
+          disabled={!address || !companyName}
         >
           Dodaj zleceniodawcę
         </Button>

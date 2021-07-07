@@ -1,13 +1,14 @@
 import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useHistory } from 'react-router';
 import {
   makeStyles,
   Paper,
   Typography,
   TextField,
   Button,
-  IconButton,
   Snackbar,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
@@ -19,6 +20,10 @@ const useStyles = makeStyles((theme) => ({
   label: {
     textTransform: 'uppercase',
     color: theme.palette.grey[600],
+
+    '&:not(:first-child)': {
+      marginTop: theme.spacing(2),
+    },
   },
   paper: {
     padding: theme.spacing(3),
@@ -34,12 +39,19 @@ const useStyles = makeStyles((theme) => ({
 
 const OrderDetails = () => {
   const { orderId } = useParams();
+  const history = useHistory();
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
   const [notes, setNotes] = useState();
   const [saveNotes, setSaveNotes] = useState(false);
+  const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
+  const [assignEmployee, setAssignEmployee] = useState('');
 
   const { usersList } = useContext(AuthContext);
+
+  const closeEmployeeMenu = () => setAssignEmployeeMenu(null);
+
+  const openEmployeeMenu = (e) => setAssignEmployeeMenu(e.currentTarget);
 
   useEffect(() => {
     const orderDetailsRef = fireDB.database().ref('Orders');
@@ -57,9 +69,17 @@ const OrderDetails = () => {
     });
   }, []);
 
-  const updateEditableFields = () => {
+  const updateOrder = () => {
     const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
-    configRef.update({ notes });
+    configRef.update({
+      notes,
+      employeeDriver: assignEmployee || orderDetail.employeeDriver,
+    });
+  };
+
+  const assignEmployeeHandler = (uId) => {
+    setAssignEmployee(uId);
+    closeEmployeeMenu();
   };
 
   return (
@@ -95,20 +115,40 @@ const OrderDetails = () => {
               Odbiorca
             </Typography>
             <Typography gutterBottom variant="body2">
+              {orderDetail.employeeDriver ||
+                usersList[assignEmployee] ||
+                'brak'}
+              <Button
+                variant="text"
+                color="primary"
+                size="small"
+                onClick={openEmployeeMenu}
+              >
+                {orderDetail.employeeDriver || assignEmployee
+                  ? 'Zmień'
+                  : 'Przypisz'}
+              </Button>
+            </Typography>
+            <Typography className={classes.label} variant="body1">
+              Pracownik obsługujący
+            </Typography>
+            <Typography gutterBottom variant="body2">
               {usersList[orderDetail.employee]}
             </Typography>
             <TextField
               label="dodatkowe informacje"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              style={{ marginTop: 25 }}
             />
             <div className={classes.actionFooter}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => {
-                  updateEditableFields();
+                  updateOrder();
                   setSaveNotes(true);
+                  history.goBack();
                 }}
               >
                 Zapisz
@@ -129,6 +169,19 @@ const OrderDetails = () => {
             <Alert severity="success">Zmiany zostały pomyślnie zapisane!</Alert>
           ) : null}
         </Snackbar>
+        <Menu
+          id="simple-menu"
+          anchorEl={assignEmployeeMenu}
+          keepMounted
+          open={!!assignEmployeeMenu}
+          onClose={closeEmployeeMenu}
+        >
+          {Object.entries(usersList).map(([uId, name]) => (
+            <MenuItem onClick={() => assignEmployeeHandler(uId)}>
+              {name}
+            </MenuItem>
+          ))}
+        </Menu>
       </MainWrapper>
     </div>
   );

@@ -118,6 +118,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                   createDate,
                   pickupDate,
                   employee,
+                  employeeDriver,
                   status,
                   attachmentLink,
                 }) => (
@@ -129,10 +130,12 @@ const OrdersTable = ({ tab, disableFilter }) => {
                       {createDate && moment(createDate).format('DD/MM/YYYY')}
                     </TableCell>
                     <TableCell style={{ fontSize: 12 }}>
-                      {pickupDate && moment(pickupDate).format('DD/MM/YYYY')}
+                      {pickupDate !== 'null'
+                        ? moment(pickupDate).format('DD/MM/YYYY')
+                        : ''}
                     </TableCell>
                     <TableCell style={{ fontSize: 12 }}>
-                      {usersList[employee]}
+                      {usersList[employeeDriver]}
                     </TableCell>
                     <TableCell>
                       <Statuses status={status} docId={docId} />

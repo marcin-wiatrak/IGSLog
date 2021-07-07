@@ -102,12 +102,9 @@ const Header = () => {
               id="simple-menu"
               anchorEl={anchorEl}
               keepMounted
-              open={Boolean(anchorEl)}
+              open={!!anchorEl}
               onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
+              style={{ marginTop: 32 }}
             >
               {currentUserProfile && (
                 <div className={classes.userMenu}>

@@ -94,7 +94,7 @@ const Customers = () => {
           onClose={() => setModalOpen(false)}
           disableBackdropClick
         >
-          <NewCustomerModalBody setModalOpen={setModalOpen} />
+          <NewCustomerModalBody setCreateCustomerModal={setModalOpen} />
         </Modal>
       </TableContainer>
     </MainWrapper>
