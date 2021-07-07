@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     transform: 'translate(-50%, -50%)',
     padding: theme.spacing(4),
-    overflowY: 'scroll',
+    overflowY: 'auto',
+
   },
   closeButton: {
     position: 'absolute',
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const NewCustomerModalBody = ({ setModalOpen }) => {
+const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
   const [address, setAddress] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [customerName, setCustomerName] = useState('');
@@ -81,13 +82,13 @@ const NewCustomerModalBody = ({ setModalOpen }) => {
 
     const pushCustomerRef = fireDB.database().ref('Customers');
     pushCustomerRef.push(customer);
-    setModalOpen(false);
+    setCreateCustomerModal(false);
   };
 
   return (
     <Paper className={classes.modalWrapper} square>
       <IconButton
-        onClick={() => setModalOpen(false)}
+        onClick={() => setCreateCustomerModal(false)}
         size="small"
         className={classes.closeButton}
       >
