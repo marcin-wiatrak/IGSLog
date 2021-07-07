@@ -4,7 +4,7 @@ import OrdersTable from '../Components/OrdersTable';
 const Fatherhood = () => {
   return (
     <MainWrapper>
-      <OrdersTable tab="fatherhood" disableFilter />
+      <OrdersTable tab="fatherhood" />
     </MainWrapper>
   );
 };

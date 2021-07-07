@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     transform: 'translate(-50%, -50%)',
     padding: theme.spacing(4),
+    overflowY: 'scroll',
   },
   closeButton: {
     position: 'absolute',
