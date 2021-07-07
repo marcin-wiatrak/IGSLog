@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     color: 'black',
   },
   statusWrapper: {
+    display: 'flex',
     '& > *': {
       width: 27,
       height: 27,
