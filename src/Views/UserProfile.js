@@ -1,4 +1,4 @@
-import MainWrapper from './Components/MainWrapper/MainWrapper';
+import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import {
   Button,
   Typography,
@@ -8,8 +8,8 @@ import {
   Snackbar,
 } from '@material-ui/core';
 import { useContext, useState } from 'react';
-import { AuthContext } from './Auth';
-import fireDB from './Firebase';
+import { AuthContext } from '../Auth';
+import fireDB from '../Firebase';
 import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({

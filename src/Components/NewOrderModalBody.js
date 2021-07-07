@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
-  const [pickupDate, setPickupDate] = useState(moment().format());
+  const [pickupDate, setPickupDate] = useState(null);
   const [localization, setLocalization] = useState('');
   const [customer, setCustomer] = useState('');
   const [signature, setSignature] = useState('');
@@ -133,7 +133,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       id: iterator,
       customer,
       createDate: '' + moment().format(),
-      pickupDate: '' + pickupDate,
+      pickupDate: '' + pickupDate || '',
       employee: currentUser.uid,
       localization,
       status: 'NEW_TASK',
@@ -184,7 +184,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
                 format="DD MMM YYYY"
                 label="Data odbioru"
                 value={pickupDate}
-                onChange={(e) => setPickupDate(moment(e._d).format())}
+                onChange={(date) => setPickupDate(moment(date).format())}
                 minDate={moment()}
                 style={{ marginLeft: '10px' }}
                 KeyboardButtonProps={{
