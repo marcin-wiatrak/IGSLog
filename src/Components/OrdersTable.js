@@ -145,7 +145,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                           size="small"
                           target="_blank"
                           rel="noreferrer noopener"
-                          disabled={!!attachmentLink}
+                          disabled={!attachmentLink}
                         >
                           <AttachFile
                             fontSize="small"
