@@ -10,10 +10,10 @@ import {
   TableRow,
   Modal,
 } from '@material-ui/core';
-import fireDB from '../Firebase';
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import NewCustomerModalBody from '../Components/NewCustomerModalBody';
+import { AuthContext } from '../Auth';
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
@@ -23,21 +23,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Customers = () => {
-  const [customers, setCustomers] = useState();
+  const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const classes = useStyles();
-  useEffect(() => {
-    const customersListRef = fireDB.database().ref('Customers');
-    customersListRef.on('value', (snapshot) => {
-      const customers = snapshot.val();
-      const customersArray = [];
-      for (let id in customers) {
-        customersArray.push({ cId: id, ...customers[id] });
-      }
-      setCustomers(customersArray);
-    });
-  }, []);
+  const { customers } = useContext(AuthContext);
 
   return (
     <MainWrapper>
@@ -54,9 +43,10 @@ const Customers = () => {
         <Table size="small">
           <TableHead>
             <TableRow>
-              <TableCell>ADRES</TableCell>
-              <TableCell>NAZWA FIRMY</TableCell>
+              <TableCell>ID</TableCell>
               <TableCell>ZLECENIODAWCA</TableCell>
+              <TableCell>ADRES</TableCell>
+              <TableCell>OSOBA DO KONTAKTU</TableCell>
               <TableCell>NUMER TELEFONU</TableCell>
               <TableCell padding="none" />
             </TableRow>
@@ -70,12 +60,19 @@ const Customers = () => {
               </TableRow>
             ) : (
               customers.map(
-                ({ address, companyName, cId, customerName, phoneNumber }) => (
-                  <TableRow>
-                    <TableCell style={{ fontSize: 12 }}>{address}</TableCell>
+                ({
+                  address,
+                  companyName,
+                  customerId,
+                  customerName,
+                  phoneNumber,
+                }) => (
+                  <TableRow key={customerId}>
+                    <TableCell style={{ fontSize: 12 }}>{customerId}</TableCell>
                     <TableCell style={{ fontSize: 12 }}>
                       {companyName}
                     </TableCell>
+                    <TableCell style={{ fontSize: 12 }}>{address}</TableCell>
                     <TableCell style={{ fontSize: 12 }}>
                       {customerName}
                     </TableCell>
@@ -94,7 +91,9 @@ const Customers = () => {
           onClose={() => setModalOpen(false)}
           disableBackdropClick
         >
-          <NewCustomerModalBody setCreateCustomerModal={setModalOpen} />
+          <div>
+            <NewCustomerModalBody setCreateCustomerModal={setModalOpen} />
+          </div>
         </Modal>
       </TableContainer>
     </MainWrapper>
