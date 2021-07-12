@@ -10,7 +10,7 @@ import {
   Modal,
   LinearProgress,
 } from '@material-ui/core';
-import { CloseRounded } from '@material-ui/icons';
+import { AddCircle, CloseRounded } from '@material-ui/icons';
 import { Autocomplete } from '@material-ui/lab';
 import {
   KeyboardDatePicker,
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(2),
   },
   modalHeader: {
-    borderBottom: `1px solid ${theme.palette.grey[400]}`,
+    // borderBottom: `1px solid ${theme.palette.grey[400]}`,
     paddingBottom: theme.spacing(2),
   },
   modalContent: {
@@ -53,6 +53,16 @@ const useStyles = makeStyles((theme) => ({
   },
   addCustomerRef: {
     paddingTop: theme.spacing(2),
+  },
+  inRowDisplay: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 40px',
+    alignItems: 'end',
+    '& > button': {
+      justifySelf: 'center',
+      width: 30,
+      height: 30,
+    },
   },
 }));
 
@@ -148,6 +158,9 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
     updateIterator();
   };
 
+  const formValidation =
+    customer === '' || signature === '' || localization === '';
+
   return (
     <>
       <Paper className={classes.modalWrapper} square>
@@ -167,14 +180,34 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
           </Typography>
         </div>
         <div className={classes.modalContent}>
-          <FormGroup row>
+          <div className={classes.inRowDisplay}>
+            <Autocomplete
+              options={customers}
+              key={customerReset}
+              getOptionLabel={(option) => option}
+              onInputChange={(e, newValue) => setCustomer(newValue)}
+              openOnFocus
+              renderInput={(params) => (
+                <TextField {...params} label="Zleceniodawca *" value={customer} />
+              )}
+            />
+            <IconButton
+              color="primary"
+              size="small"
+              onClick={() => {
+                setCreateCustomerModal(true);
+              }}
+            >
+              <AddCircle />
+            </IconButton>
+          </div>
+          <FormGroup>
             <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
               <KeyboardDatePicker
                 format="DD MMM YYYY"
                 label="Data utworzenia"
                 value={moment().format()}
                 minDate={moment()}
-                style={{ marginRight: '10px' }}
                 KeyboardButtonProps={{
                   'aria-label': 'Zmień datę',
                 }}
@@ -186,7 +219,6 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
                 value={pickupDate}
                 onChange={(date) => setPickupDate(moment(date).format())}
                 minDate={moment()}
-                style={{ marginLeft: '10px' }}
                 KeyboardButtonProps={{
                   'aria-label': 'Zmień datę',
                 }}
@@ -194,34 +226,14 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             </MuiPickersUtilsProvider>
           </FormGroup>
           <TextField
-            label="Miejsce docelowe"
+            label="Miejsce docelowe *"
             fullWidth
             margin="normal"
             value={localization}
             onChange={(e) => setLocalization(e.target.value)}
           />
-          <Autocomplete
-            options={customers}
-            key={customerReset}
-            getOptionLabel={(option) => option}
-            onInputChange={(e, newValue) => setCustomer(newValue)}
-            openOnFocus
-            renderInput={(params) => (
-              <TextField {...params} label="Zleceniodawca" value={customer} />
-            )}
-          />
-          <Button
-            style={{ marginTop: '10px' }}
-            color="primary"
-            variant="contained"
-            onClick={() => {
-              setCreateCustomerModal(true);
-            }}
-          >
-            Dodaj zleceniodawcę
-          </Button>
           <TextField
-            label="Kod zlecenia"
+            label="Kod zlecenia *"
             value={signature}
             fullWidth
             margin="normal"
@@ -267,7 +279,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             color="primary"
             variant="contained"
             onClick={createTaskHandler}
-            disabled={!!file.name && uploadProgress !== 100}
+            disabled={(!!file.name && uploadProgress !== 100) || formValidation}
           >
             {!!file.name && uploadProgress !== 100
               ? 'Najpierw wyślij plik'

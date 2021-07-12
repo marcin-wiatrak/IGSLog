@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     margin: '8px 0',
   },
+  heading: {
+    fontWeight: 'bold',
+  },
 }));
 
 const AdminPanel = () => {
@@ -87,6 +90,14 @@ const AdminPanel = () => {
 
   return (
     <MainWrapper>
+      <Typography
+        variant="h4"
+        color="textSecondary"
+        gutterBottom
+        className={classes.heading}
+      >
+        PANEL ADMINISTRACYJNY
+      </Typography>
       <Grid container spacing={3}>
         <Grid xs={4} item>
           <Paper square className={classes.paper}>
