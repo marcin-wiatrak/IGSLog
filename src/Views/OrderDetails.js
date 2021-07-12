@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useHistory } from 'react-router';
 import {
   makeStyles,
@@ -9,12 +9,18 @@ import {
   Snackbar,
   Menu,
   MenuItem,
+  FormGroup,
 } from '@material-ui/core';
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { AuthContext } from '../Auth';
 import { Alert } from '@material-ui/lab';
+import {
+  KeyboardDatePicker,
+  MuiPickersUtilsProvider,
+} from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -46,8 +52,9 @@ const OrderDetails = () => {
   const [saveNotes, setSaveNotes] = useState(false);
   const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
   const [assignEmployee, setAssignEmployee] = useState('');
+  const [pickupDate, setPickupDate] = useState(null);
 
-  const { usersList } = useContext(AuthContext);
+  const { usersList, customersList } = useContext(AuthContext);
 
   const closeEmployeeMenu = () => setAssignEmployeeMenu(null);
 
@@ -66,6 +73,8 @@ const OrderDetails = () => {
       );
       setOrderDetail(singleOrderDetails);
       setNotes(singleOrderDetails.notes);
+      setPickupDate(singleOrderDetails.pickupDate);
+      setAssignEmployee(singleOrderDetails.employee);
     });
   }, []);
 
@@ -73,6 +82,7 @@ const OrderDetails = () => {
     const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
     configRef.update({
       notes,
+      pickupDate,
       employeeDriver: assignEmployee || orderDetail.employeeDriver,
     });
   };
@@ -91,7 +101,7 @@ const OrderDetails = () => {
               Zleceniodawca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {orderDetail.customer}
+              {customersList[orderDetail.customer]}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Sygnatura sprawy
@@ -103,20 +113,34 @@ const OrderDetails = () => {
               Data utworzenia
             </Typography>
             <Typography gutterBottom variant="body2">
-              {moment(orderDetail.createDate).format('DD-MM-YYYY')}
+              {moment(orderDetail.createDate).format('DD MMM YYYY')}
             </Typography>
             <Typography className={classes.label} variant="body1">
               Data odbioru
             </Typography>
-            <Typography gutterBottom variant="body2">
-              {moment(orderDetail.pickupDate).format('DD-MM-YYYY')}
+            <Typography gutterBottom variant="body2" component="div">
+              <FormGroup>
+                <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
+                  <KeyboardDatePicker
+                    format="DD MMM YYYY"
+                    label="Data odbioru"
+                    value={pickupDate}
+                    onChange={(date) => setPickupDate(moment(date).format())}
+                    minDate={moment()}
+                    style={{ maxWidth: 150 }}
+                    KeyboardButtonProps={{
+                      'aria-label': 'Zmień datę',
+                    }}
+                  />
+                </MuiPickersUtilsProvider>
+              </FormGroup>
             </Typography>
             <Typography className={classes.label} variant="body1">
               Odbiorca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {orderDetail.employeeDriver ||
-                usersList[assignEmployee] ||
+              {usersList[assignEmployee] ||
+                orderDetail.employeeDriver ||
                 'brak'}
               <Button
                 variant="text"
@@ -130,7 +154,7 @@ const OrderDetails = () => {
               </Button>
             </Typography>
             <Typography className={classes.label} variant="body1">
-              Pracownik obsługujący
+              Osoba odpowiedzialna
             </Typography>
             <Typography gutterBottom variant="body2">
               {usersList[orderDetail.employee]}
@@ -177,7 +201,7 @@ const OrderDetails = () => {
           onClose={closeEmployeeMenu}
         >
           {Object.entries(usersList).map(([uId, name]) => (
-            <MenuItem onClick={() => assignEmployeeHandler(uId)}>
+            <MenuItem key={uId} onClick={() => assignEmployeeHandler(uId)}>
               {name}
             </MenuItem>
           ))}
