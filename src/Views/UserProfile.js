@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
   modalFooter: {
     marginTop: theme.spacing(2),
   },
+  heading: {
+    fontWeight: 'bold',
+  },
 }));
 
 const UserProfile = () => {
@@ -46,6 +49,14 @@ const UserProfile = () => {
   return (
     <>
       <MainWrapper>
+        <Typography
+          variant="h4"
+          color="textSecondary"
+          gutterBottom
+          className={classes.heading}
+        >
+          PROFIL UŻYTKOWNIKA
+        </Typography>
         <Typography>Zmiana hasła</Typography>
         <Button onClick={() => setConfirmationModalOpen(true)}>
           Zmiana hasła
