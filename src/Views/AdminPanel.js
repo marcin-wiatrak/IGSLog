@@ -170,7 +170,7 @@ const AdminPanel = () => {
             <Typography variant="h5">Lista pracowników:</Typography>
             <div>
               {Object.entries(usersList).map(([uId, name], index) => (
-                <Typography>{`${index + 1}. ${name}`}</Typography>
+                <Typography key={uId}>{`${index + 1}. ${name}`}</Typography>
               ))}
             </div>
           </Paper>

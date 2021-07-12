@@ -8,11 +8,37 @@ export const AuthProvider = ({ children }) => {
   const [currentUserProfile, setCurrentUserProfile] = useState({});
   const [pending, setPending] = useState(true);
   const [usersList, setUsersList] = useState({});
+  const [customers, setCustomers] = useState([]);
+  const [orders, setOrders] = useState();
 
   useEffect(() => {
     fireDB.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
       setPending(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    const ordersRef = fireDB.database().ref('Orders');
+    ordersRef.on('value', (snapshot) => {
+      const ordersData = snapshot.val();
+      const ordersList = [];
+      for (let id in ordersData) {
+        ordersList.push({ docId: id, ...ordersData[id] });
+      }
+      setOrders(ordersList);
+    });
+  }, []);
+
+  useEffect(() => {
+    const customers = fireDB.database().ref('Customers');
+    customers.on('value', (snapshot) => {
+      const customers = snapshot.val();
+      const customersList = [];
+      for (let item in customers) {
+        customersList.push(customers[item]);
+      }
+      setCustomers(customersList);
     });
   }, []);
 
@@ -41,11 +67,19 @@ export const AuthProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  const customersList = customers.reduce((acc, item) => {
+    acc[item.customerId] = item.companyName;
+    return acc;
+  }, {});
+
   if (pending) return <>Loading...</>;
 
   return (
     <AuthContext.Provider
       value={{
+        customersList,
+        orders,
+        customers,
         currentUser,
         currentUserProfile,
         usersList,
