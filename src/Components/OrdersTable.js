@@ -118,7 +118,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                       {createDate && moment(createDate).format('DD/MM/YYYY')}
                     </TableCell>
                     <TableCell style={{ fontSize: 12 }}>
-                      {pickupDate !== 'null'
+                      {pickupDate
                         ? moment(pickupDate).format('DD/MM/YYYY')
                         : ''}
                     </TableCell>
