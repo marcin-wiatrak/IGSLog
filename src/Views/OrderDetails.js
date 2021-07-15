@@ -10,6 +10,7 @@ import {
   Menu,
   MenuItem,
   FormGroup,
+  IconButton,
 } from '@material-ui/core';
 import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
@@ -21,6 +22,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
+import { Clear } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   label: {
@@ -41,6 +43,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     paddingTop: theme.spacing(2),
   },
+  inlineDisplay: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
 }));
 
 const OrderDetails = () => {
@@ -51,7 +58,7 @@ const OrderDetails = () => {
   const [notes, setNotes] = useState();
   const [saveNotes, setSaveNotes] = useState(false);
   const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
-  const [assignEmployee, setAssignEmployee] = useState('');
+  const [assignEmployee, setAssignEmployee] = useState(null);
   const [pickupDate, setPickupDate] = useState(null);
 
   const { usersList, customersList } = useContext(AuthContext);
@@ -73,8 +80,8 @@ const OrderDetails = () => {
       );
       setOrderDetail(singleOrderDetails);
       setNotes(singleOrderDetails.notes);
-      setPickupDate(singleOrderDetails.pickupDate);
-      setAssignEmployee(singleOrderDetails.employee);
+      setPickupDate(singleOrderDetails.pickupDate || null);
+      setAssignEmployee(singleOrderDetails.employeeDriver || null);
     });
   }, []);
 
@@ -83,7 +90,7 @@ const OrderDetails = () => {
     configRef.update({
       notes,
       pickupDate,
-      employeeDriver: assignEmployee || orderDetail.employeeDriver,
+      employeeDriver: assignEmployee ? assignEmployee : null,
     });
   };
 
@@ -118,30 +125,30 @@ const OrderDetails = () => {
             <Typography className={classes.label} variant="body1">
               Data odbioru
             </Typography>
-            <Typography gutterBottom variant="body2" component="div">
-              <FormGroup>
-                <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
-                  <KeyboardDatePicker
-                    format="DD MMM YYYY"
-                    label="Data odbioru"
-                    value={pickupDate}
-                    onChange={(date) => setPickupDate(moment(date).format())}
-                    minDate={moment()}
-                    style={{ maxWidth: 150 }}
-                    KeyboardButtonProps={{
-                      'aria-label': 'Zmień datę',
-                    }}
-                  />
-                </MuiPickersUtilsProvider>
-              </FormGroup>
-            </Typography>
+            <FormGroup className={classes.inlineDisplay}>
+              <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
+                <KeyboardDatePicker
+                  format="DD MMM YYYY"
+                  label="Data odbioru"
+                  value={pickupDate}
+                  onChange={(date) => setPickupDate(moment(date).format())}
+                  minDate={moment()}
+                  KeyboardButtonProps={{
+                    'aria-label': 'Zmień datę',
+                  }}
+                />
+              </MuiPickersUtilsProvider>
+              <IconButton size="small" onClick={() => setPickupDate(null)}>
+                <Clear />
+              </IconButton>
+            </FormGroup>
             <Typography className={classes.label} variant="body1">
               Odbiorca
             </Typography>
             <Typography gutterBottom variant="body2">
-              {usersList[assignEmployee] ||
-                orderDetail.employeeDriver ||
-                'brak'}
+              {(assignEmployee === null && 'brak') ||
+                usersList[assignEmployee] ||
+                orderDetail.employeeDriver}
               <Button
                 variant="text"
                 color="primary"
@@ -200,6 +207,9 @@ const OrderDetails = () => {
           open={!!assignEmployeeMenu}
           onClose={closeEmployeeMenu}
         >
+          <MenuItem key="none" onClick={() => assignEmployeeHandler(null)}>
+            USUŃ PRZYPISANIE
+          </MenuItem>
           {Object.entries(usersList).map(([uId, name]) => (
             <MenuItem key={uId} onClick={() => assignEmployeeHandler(uId)}>
               {name}
