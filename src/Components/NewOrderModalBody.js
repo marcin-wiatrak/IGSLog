@@ -188,7 +188,11 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
               onInputChange={(e, newValue) => setCustomer(newValue)}
               openOnFocus
               renderInput={(params) => (
-                <TextField {...params} label="Zleceniodawca *" value={customer} />
+                <TextField
+                  {...params}
+                  label="Zleceniodawca *"
+                  value={customer}
+                />
               )}
             />
             <IconButton

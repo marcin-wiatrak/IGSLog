@@ -21,7 +21,6 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(-50%, -50%)',
     padding: theme.spacing(4),
     overflowY: 'auto',
-
   },
   closeButton: {
     position: 'absolute',
