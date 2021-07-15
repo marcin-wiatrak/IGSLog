@@ -92,6 +92,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   };
 
   const uploadFile = (e) => {
+    console.log(e.target.files[0]);
     if (e.target.files[0]) {
       setFile(e.target.files[0]);
     }
@@ -131,7 +132,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
       id: iterator,
       customer,
       createDate: '' + moment().format(),
-      pickupDate: '' + pickupDate || '',
+      pickupDate: pickupDate ? pickupDate : null,
       employee: currentUser.uid,
       localization,
       status: 'NEW_TASK',
@@ -146,8 +147,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
     updateIterator();
   };
 
-  const formValidation =
-    customer === '' || signature === '' || localization === '';
+  const formValidation = customer === '' || signature === '';
 
   return (
     <>
@@ -220,7 +220,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             </MuiPickersUtilsProvider>
           </FormGroup>
           <TextField
-            label="Miejsce docelowe *"
+            label="Miejsce docelowe"
             fullWidth
             margin="normal"
             value={localization}
