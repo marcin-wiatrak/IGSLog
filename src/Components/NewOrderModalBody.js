@@ -18,7 +18,7 @@ import {
 } from '@material-ui/pickers';
 import moment from 'moment';
 import 'moment/locale/pl';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../Auth';
 import fireDB, { storage } from '../Firebase';
 import NewCustomerModalBody from './NewCustomerModalBody';
@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: '1fr 40px',
     alignItems: 'end',
+    marginBottom: theme.spacing(1),
     '& > button': {
       justifySelf: 'center',
       width: 30,
@@ -73,27 +74,14 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [signature, setSignature] = useState('');
   const [notes, setNotes] = useState('');
   const [customerReset, setCustomerReset] = useState(false);
-  const [customers, setCustomers] = useState(['No customers', 'Another']);
   const [createCustomerModal, setCreateCustomerModal] = useState(false);
   const [file, setFile] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [attachmentLink, setAttachmentLink] = useState('');
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, customers } = useContext(AuthContext);
 
   const classes = useStyles();
-
-  useEffect(() => {
-    const customers = fireDB.database().ref('Customers');
-    customers.on('value', (snapshot) => {
-      const customers = snapshot.val();
-      const customersList = [];
-      for (let item in customers) {
-        customersList.push(customers[item].companyName);
-      }
-      setCustomers(customersList);
-    });
-  }, []);
 
   const resetForm = () => {
     setPickupDate(new Date());
@@ -184,8 +172,10 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             <Autocomplete
               options={customers}
               key={customerReset}
-              getOptionLabel={(option) => option}
-              onInputChange={(e, newValue) => setCustomer(newValue)}
+              getOptionLabel={(option) => option.companyName}
+              onChange={(e, newValue) =>
+                setCustomer(newValue && newValue.customerId)
+              }
               openOnFocus
               renderInput={(params) => (
                 <TextField
@@ -237,7 +227,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             onChange={(e) => setLocalization(e.target.value)}
           />
           <TextField
-            label="Kod zlecenia *"
+            label="Sygnatura sprawy *"
             value={signature}
             fullWidth
             margin="normal"

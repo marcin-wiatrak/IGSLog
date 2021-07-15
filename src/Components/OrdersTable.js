@@ -35,25 +35,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const OrdersTable = ({ tab, disableFilter }) => {
+  const classes = useStyles();
   const [iterator, setIterator] = useState();
-  const [ordersStore, setOrdersStore] = useState();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { usersList } = useContext(AuthContext);
-
-  const classes = useStyles();
-
-  useEffect(() => {
-    const ordersRef = fireDB.database().ref('Orders');
-    ordersRef.on('value', (snapshot) => {
-      const orders = snapshot.val();
-      const ordersList = [];
-      for (let id in orders) {
-        ordersList.push({ docId: id, ...orders[id] });
-      }
-      setOrdersStore(ordersList);
-    });
-  }, []);
+  const { usersList, orders, customersList } = useContext(AuthContext);
 
   useEffect(() => {
     const configRef = fireDB.database().ref('Config').child('Iterator');
@@ -63,8 +49,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
     });
   }, []);
 
-  const filterTableRecords = () =>
-    ordersStore.filter((item) => item.type === tab);
+  const filterTableRecords = () => orders.filter((item) => item.type === tab);
 
   const updateIterator = () => {
     const configRef = fireDB.database().ref('Config');
@@ -97,19 +82,20 @@ const OrdersTable = ({ tab, disableFilter }) => {
               <TableCell>DATA UTWORZENIA</TableCell>
               <TableCell>DATA ODBIORU</TableCell>
               <TableCell>ODBIORCA</TableCell>
+              <TableCell>OS. ODP.</TableCell>
               <TableCell>STATUS ZLECENIA</TableCell>
               <TableCell padding="none" />
             </TableRow>
           </TableHead>
           <TableBody>
-            {!ordersStore ? (
+            {!orders ? (
               <TableRow>
                 <TableCell align="center" colSpan="20">
                   Ładowanie...
                 </TableCell>
               </TableRow>
             ) : (
-              ((disableFilter && ordersStore) || filterTableRecords()).map(
+              ((disableFilter && orders) || filterTableRecords()).map(
                 ({
                   id,
                   docId,
@@ -124,7 +110,9 @@ const OrdersTable = ({ tab, disableFilter }) => {
                 }) => (
                   <TableRow key={id}>
                     <TableCell style={{ fontSize: 12 }}>{id}</TableCell>
-                    <TableCell style={{ fontSize: 12 }}>{customer}</TableCell>
+                    <TableCell style={{ fontSize: 12 }}>
+                      {customersList[customer]}
+                    </TableCell>
                     <TableCell style={{ fontSize: 12 }}>{signature}</TableCell>
                     <TableCell style={{ fontSize: 12 }}>
                       {createDate && moment(createDate).format('DD/MM/YYYY')}
@@ -137,6 +125,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
                     <TableCell style={{ fontSize: 12 }}>
                       {usersList[employeeDriver]}
                     </TableCell>
+                    <TableCell>{usersList[employee]}</TableCell>
                     <TableCell>
                       <Statuses status={status} docId={docId} />
                     </TableCell>

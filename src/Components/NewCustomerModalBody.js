@@ -47,21 +47,22 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [customerReset, setCustomerReset] = useState(false);
-  const [customers, setCustomers] = useState([]);
+  const [customerIterator, setCustomerIterator] = useState();
 
   const classes = useStyles();
 
   useEffect(() => {
-    const customers = fireDB.database().ref('Customers');
-    customers.on('value', (snapshot) => {
-      const customers = snapshot.val();
-      const customersList = [];
-      for (let item in customers) {
-        customersList.push(customers[item].customerName);
-      }
-      setCustomers(customersList);
+    const configRef = fireDB.database().ref('Config').child('CustomerIterator');
+    configRef.on('value', (snapshot) => {
+      const customerIteratorVal = snapshot.val();
+      setCustomerIterator(customerIteratorVal);
     });
   }, []);
+
+  const updateCustomerIterator = () => {
+    const configRef = fireDB.database().ref('Config');
+    configRef.update({ CustomerIterator: customerIterator + 1 });
+  };
 
   const resetForm = () => {
     setAddress('');
@@ -77,10 +78,12 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
       companyName,
       customerName,
       phoneNumber,
+      customerId: customerIterator,
     };
 
     const pushCustomerRef = fireDB.database().ref('Customers');
     pushCustomerRef.push(customer);
+    updateCustomerIterator();
     setCreateCustomerModal(false);
   };
 
@@ -100,6 +103,13 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
       </div>
       <div className={classes.modalContent}>
         <TextField
+          label="Zleceniodawca *"
+          value={companyName}
+          fullWidth
+          margin="normal"
+          onChange={(e) => setCompanyName(e.target.value)}
+        />
+        <TextField
           label="Adres zleceniodawcy *"
           fullWidth
           margin="normal"
@@ -107,14 +117,7 @@ const NewCustomerModalBody = ({ setCreateCustomerModal }) => {
           onChange={(e) => setAddress(e.target.value)}
         />
         <TextField
-          label="Nazwa firmy *"
-          value={companyName}
-          fullWidth
-          margin="normal"
-          onChange={(e) => setCompanyName(e.target.value)}
-        />
-        <TextField
-          label="Zleceniodawca"
+          label="Osoba do kontaktu"
           value={customerName}
           fullWidth
           margin="normal"
