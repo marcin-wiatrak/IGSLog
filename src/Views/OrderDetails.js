@@ -16,7 +16,7 @@ import fireDB from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { AuthContext } from '../Auth';
-import { Alert } from '@material-ui/lab';
+import { Alert, Autocomplete } from '@material-ui/lab';
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -60,8 +60,11 @@ const OrderDetails = () => {
   const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
   const [assignEmployee, setAssignEmployee] = useState(null);
   const [pickupDate, setPickupDate] = useState(null);
+  const [customer, setCustomer] = useState('');
+  const [signature, setSignature] = useState('');
+  const [changeSignature, setChangeSignature] = useState(false);
 
-  const { usersList, customersList } = useContext(AuthContext);
+  const { usersList, customersList, customers } = useContext(AuthContext);
 
   const closeEmployeeMenu = () => setAssignEmployeeMenu(null);
 
@@ -90,13 +93,19 @@ const OrderDetails = () => {
     configRef.update({
       notes,
       pickupDate,
-      employeeDriver: assignEmployee ? assignEmployee : null,
+      employeeDriver: assignEmployee || null,
+      customer: customer || orderDetail.customer,
+      signature: changeSignature ? signature : orderDetail.signature,
     });
   };
 
   const assignEmployeeHandler = (uId) => {
     setAssignEmployee(uId);
     closeEmployeeMenu();
+  };
+
+  const changeSignatureHandler = () => {
+    setChangeSignature(!changeSignature);
   };
 
   return (
@@ -109,12 +118,43 @@ const OrderDetails = () => {
             </Typography>
             <Typography gutterBottom variant="body2">
               {customersList[orderDetail.customer]}
+              <Autocomplete
+                options={customers}
+                getOptionLabel={(option) => option.companyName}
+                onChange={(e, newValue) =>
+                  setCustomer(newValue && newValue.customerId)
+                }
+                openOnFocus
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Zleceniodawca"
+                    value={customer}
+                    style={{ maxWidth: 300 }}
+                  />
+                )}
+              />
             </Typography>
             <Typography className={classes.label} variant="body1">
               Sygnatura sprawy
             </Typography>
             <Typography gutterBottom variant="body2">
               {orderDetail.signature}
+              {changeSignature && (
+                <TextField
+                  value={signature}
+                  onChange={e => setSignature(e.target.value)}
+                  label="Nowa sygnatura"
+                />
+              )}
+              <Button
+                variant="text"
+                color="primary"
+                size="small"
+                onClick={() => setChangeSignature(!changeSignature)}
+              >
+                {changeSignature ? 'Anuluj' : 'Zmień'}
+              </Button>
             </Typography>
             <Typography className={classes.label} variant="body1">
               Data utworzenia

@@ -71,31 +71,31 @@ const Statuses = ({ status, docId }) => {
   const classes = useStyles();
   return (
     <div className={classes.statusWrapper}>
-      <Tooltip title="ZAREJESTROWANE">
+      <Tooltip title="ZAREJESTROWANE" arrow>
         <NewReleases
           onClick={() => changeStatusHandler('NEW_TASK', docId)}
           className={`${status === 'NEW_TASK' ? classes.newTask : ''}`}
         />
       </Tooltip>
-      <Tooltip title="W TRAKCIE REALIZACJI">
+      <Tooltip title="W TRAKCIE REALIZACJI" arrow>
         <Sync
           onClick={() => changeStatusHandler('ACCEPTED', docId)}
           className={`${status === 'ACCEPTED' ? classes.accepted : ''}`}
         />
       </Tooltip>
-      <Tooltip title="ODBIÓR USTALONY">
+      <Tooltip title="ODBIÓR USTALONY" arrow>
         <FlightTakeoff
           onClick={() => changeStatusHandler('PICKED_UP', docId)}
           className={`${status === 'PICKED_UP' ? classes.pickedUp : ''}`}
         />
       </Tooltip>
-      <Tooltip title="DOSTARCZONE">
+      <Tooltip title="DOSTARCZONE" arrow>
         <FlightLand
           onClick={() => changeStatusHandler('DELIVERED', docId)}
           className={`${status === 'DELIVERED' ? classes.delivered : ''}`}
         />
       </Tooltip>
-      <Tooltip title="MATERIAŁ PRZEKAZANY NA DZIAŁ">
+      <Tooltip title="MATERIAŁ PRZEKAZANY NA DZIAŁ" arrow>
         <AssignmentTurnedIn
           onClick={() => changeStatusHandler('CLOSED', docId)}
           className={`${status === 'CLOSED' ? classes.closed : ''}`}

@@ -65,10 +65,15 @@ const useStyles = makeStyles((theme) => ({
       height: 30,
     },
   },
+  margin1: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [pickupDate, setPickupDate] = useState(null);
+  const [createDate, setCreateDate] = useState(moment().format());
   const [localization, setLocalization] = useState('');
   const [customer, setCustomer] = useState('');
   const [signature, setSignature] = useState('');
@@ -78,6 +83,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [file, setFile] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [attachmentLink, setAttachmentLink] = useState('');
+  const [fileName, setFileName] = useState('');
 
   const { currentUser, customers } = useContext(AuthContext);
 
@@ -92,10 +98,19 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   };
 
   const uploadFile = (e) => {
-    console.log(e.target.files[0]);
     if (e.target.files[0]) {
       setFile(e.target.files[0]);
+      generateFileName(e.target.files[0]);
     }
+  };
+
+  const generateFileName = (fileItem) => {
+    const fileData = fileItem || file;
+    const [fileExtension] = fileData.name.split('.').slice(-1);
+    const fileNameString = `zalacznik_${moment(createDate).format(
+      'YYYYMMDD_HHmmss'
+    )}_${signature.replaceAll(' ', '_').toLowerCase()}.${fileExtension}`;
+    setFileName(fileNameString);
   };
 
   const fileUploadClear = () => {
@@ -200,7 +215,8 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
               <KeyboardDatePicker
                 format="DD MMM YYYY"
                 label="Data utworzenia"
-                value={moment().format()}
+                value={createDate}
+                onChange={(date) => setCreateDate(moment(date).format())}
                 minDate={moment()}
                 KeyboardButtonProps={{
                   'aria-label': 'Zmień datę',
@@ -232,39 +248,61 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             fullWidth
             margin="normal"
             onChange={(e) => setSignature(e.target.value)}
+            disabled={fileName}
           />
           <TextField
             label="Notatki"
             fullWidth
             multiline
-            rows={4}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
-        <Typography variant="subtitle1" color="textSecondary">
-          Dodaj załącznik
-        </Typography>
-        <Button variant="contained" component="label" fullWidth>
-          Wybierz plik
-          <input type="file" hidden onChange={uploadFile} key={file.name} />
-        </Button>
-        {file && (
-          <>
-            <Typography variant="caption">Wybrany plik: {file.name}</Typography>
-            <LinearProgress variant="determinate" value={uploadProgress} />
-            <div>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleUpload}
-              >
-                Wgraj plik
-              </Button>
-              <Button onClick={fileUploadClear}>Anuluj</Button>
-            </div>
-          </>
-        )}
+        <div>
+          <Typography variant="subtitle1" color="textSecondary">
+            Dodaj załącznik
+          </Typography>
+          <Button
+            variant="contained"
+            component="label"
+            color="primary"
+            fullWidth
+            disabled={!signature}
+          >
+            Wybierz plik
+            <input type="file" hidden onChange={uploadFile} key={file.name} />
+          </Button>
+          {!signature && (
+            <Typography color="error" variant="caption">
+              Wprowadź sygnaturę przed dodaniem załącznika
+            </Typography>
+          )}
+          {file && (
+            <>
+              <Typography variant="body2" className={classes.margin1}>
+                Wybrany plik: {file.name}
+              </Typography>
+              <Typography variant="body2" className={classes.margin1}>
+                Nazwa po wgraniu: {fileName}
+              </Typography>
+              <LinearProgress
+                variant="determinate"
+                value={uploadProgress}
+                className={classes.margin1}
+              />
+              <div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleUpload}
+                >
+                  Wgraj plik
+                </Button>
+                <Button onClick={fileUploadClear}>Anuluj</Button>
+              </div>
+            </>
+          )}
+        </div>
         <div className={classes.modalFooter}>
           <Button variant="contained" onClick={resetForm}>
             Wyczyść formularz
