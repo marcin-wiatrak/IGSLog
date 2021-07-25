@@ -19,6 +19,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (currentUser) {
+      const currentUserProfileRef = fireDB
+        .database()
+        .ref(`Users/${currentUser.uid}`);
+      currentUserProfileRef.on('value', (snapshot) =>
+        setCurrentUserProfile(snapshot.val())
+      );
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
     const ordersRef = fireDB.database().ref('Orders');
     ordersRef.on('value', (snapshot) => {
       const ordersData = snapshot.val();
@@ -56,16 +67,6 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (currentUser) {
-      const currentUserProfileRef = fireDB
-        .database()
-        .ref(`Users/${currentUser.uid}`);
-      currentUserProfileRef.on('value', (snapshot) =>
-        setCurrentUserProfile(snapshot.val())
-      );
-    }
-  }, [currentUser]);
 
   const customersList = customers.reduce((acc, item) => {
     acc[item.customerId] = item.companyName;
