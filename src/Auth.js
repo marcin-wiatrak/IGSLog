@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [usersList, setUsersList] = useState({});
   const [customers, setCustomers] = useState([]);
   const [orders, setOrders] = useState();
+  const [specialDrivers, setSpecialDrivers] = useState({});
 
   useEffect(() => {
     fireDB.auth().onAuthStateChanged((user) => {
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
       getOrders();
       getCustomers();
       getUsers();
+      getSpecialDrivers();
     });
   }, []);
 
@@ -32,9 +34,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  const getOrders = () => {
+  const getOrders = async () => {
     const ordersRef = fireDB.database().ref('Orders');
-    ordersRef.on('value', (snapshot) => {
+    await ordersRef.on('value', (snapshot) => {
       const ordersData = snapshot.val();
       const ordersList = [];
       for (let id in ordersData) {
@@ -44,9 +46,9 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const getCustomers = () => {
+  const getCustomers = async () => {
     const customers = fireDB.database().ref('Customers');
-    customers.on('value', (snapshot) => {
+    await customers.on('value', (snapshot) => {
       const customers = snapshot.val();
       const customersList = [];
       for (let id in customers) {
@@ -56,9 +58,9 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const getUsers = () => {
+  const getUsers = async () => {
     const usersRef = fireDB.database().ref('Users');
-    usersRef.on('value', (snapshot) => {
+    await usersRef.on('value', (snapshot) => {
       const usersData = Object.entries(snapshot.val()).reduce(
         (acc, [id, user]) => {
           acc[id] = `${user.firstName} ${user.lastName}`;
@@ -70,10 +72,25 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const getSpecialDrivers = async () => {
+    const ref = fireDB.database().ref('SpecialDrivers');
+    await ref.on('value', (snapshot) => {
+      const specialDriversList = Object.entries(snapshot.val()).reduce(
+        (acc, [id, { name }]) => {
+          acc[id] = name;
+          return acc;
+        },
+        {}
+      );
+      setSpecialDrivers(specialDriversList);
+    });
+  };
+
   useEffect(() => {
     getOrders();
     getCustomers();
     getUsers();
+    getSpecialDrivers();
   }, []);
 
   const customersList = customers.reduce((acc, item) => {
@@ -92,6 +109,7 @@ export const AuthProvider = ({ children }) => {
         currentUser,
         currentUserProfile,
         usersList,
+        specialDrivers,
       }}
     >
       {children}

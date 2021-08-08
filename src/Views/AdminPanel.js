@@ -57,8 +57,20 @@ const AdminPanel = () => {
   const [idToRemove, setIdToRemove] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [orderToRemove, setOrderToRemove] = useState(null);
+  const [specialDriverName, setSpecialDriverName] = useState('');
 
-  const { usersList, orders, customersList } = useContext(AuthContext);
+  const { usersList, orders, customersList, specialDrivers } = useContext(AuthContext);
+
+  const addSpecialDriversHandler = (e) => {
+    e.preventDefault();
+    const ref = fireDB.database().ref('SpecialDrivers');
+    const specialDriverData = {
+      name: specialDriverName,
+    };
+    ref.push(specialDriverData);
+    setSpecialDriverName('');
+    setSnackbar('SPECIALDRIVER_ADDED');
+  };
 
   const handleRegisterNewAccount = async (e) => {
     e.preventDefault();
@@ -143,6 +155,10 @@ const AdminPanel = () => {
       case 'ORDER_NOTFOUND':
         return (
           <Alert severity="error">Nie znaleziono zlecenia o podanym ID</Alert>
+        );
+      case 'SPECIALDRIVER_ADDED':
+        return (
+          <Alert severity="success">Odbiorca specjalny dodany pomyślnie!</Alert>
         );
       default:
         return <Alert />;
@@ -238,7 +254,7 @@ const AdminPanel = () => {
         </Grid>
         <Grid xs={4} item>
           <Paper square className={classes.paper}>
-            <Typography variant="h5">Usuwanie zlecenia:</Typography>
+            <Typography variant="h5">Usuwanie zlecenia</Typography>
             <form onSubmit={deleteTaskDialogOpen}>
               <TextField
                 label="#ID zlecenia do usunięcia"
@@ -251,6 +267,30 @@ const AdminPanel = () => {
               <div className={classes.paperFooter}>
                 <Button type="submit" variant="contained" color="primary">
                   Usuń zlecenie
+                </Button>
+              </div>
+            </form>
+          </Paper>
+        </Grid>
+        <Grid xs={4} item>
+          <Paper square className={classes.paper}>
+            <Typography variant="h5">Odbiorcy specjalni</Typography>
+            {Object.entries(specialDrivers).map(([id, item], index) => (
+                <Typography key={id}>{`${index + 1}. ${item}`}</Typography>
+              )
+            )}
+            <form onSubmit={addSpecialDriversHandler}>
+              <TextField
+                label="Nazwa odbiorcy specjalnego"
+                size="small"
+                variant="outlined"
+                value={specialDriverName}
+                onChange={(e) => setSpecialDriverName(e.target.value)}
+                className={classes.input}
+              />
+              <div className={classes.paperFooter}>
+                <Button type="submit" variant="contained" color="primary">
+                  Dodaj odbiorcę
                 </Button>
               </div>
             </form>
