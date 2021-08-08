@@ -2,6 +2,7 @@ import firebase from 'firebase/app';
 import 'firebase/firebase-auth';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/analytics';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDhgtW6nrmJGXXcOTDZHZnzvBWbgrtk1yM',
@@ -12,9 +13,12 @@ const firebaseConfig = {
   storageBucket: 'igs-devdb.appspot.com',
   messagingSenderId: '1070129629009',
   appId: '1:1070129629009:web:782af395fc6573a192b570',
+  measurementId: 'G-RY9KXMHJYC',
 };
 
 const fireDB = firebase.initializeApp(firebaseConfig);
+
+firebase.analytics();
 
 export const storage = firebase.storage();
 

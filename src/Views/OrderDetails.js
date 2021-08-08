@@ -86,7 +86,7 @@ const OrderDetails = () => {
       setPickupDate(singleOrderDetails.pickupDate || null);
       setAssignEmployee(singleOrderDetails.employeeDriver || null);
     });
-  }, []);
+  });
 
   const updateOrder = () => {
     const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
@@ -102,10 +102,6 @@ const OrderDetails = () => {
   const assignEmployeeHandler = (uId) => {
     setAssignEmployee(uId);
     closeEmployeeMenu();
-  };
-
-  const changeSignatureHandler = () => {
-    setChangeSignature(!changeSignature);
   };
 
   return (
@@ -143,7 +139,7 @@ const OrderDetails = () => {
               {changeSignature && (
                 <TextField
                   value={signature}
-                  onChange={e => setSignature(e.target.value)}
+                  onChange={(e) => setSignature(e.target.value)}
                   label="Nowa sygnatura"
                 />
               )}
@@ -172,7 +168,6 @@ const OrderDetails = () => {
                   label="Data odbioru"
                   value={pickupDate}
                   onChange={(date) => setPickupDate(moment(date).format())}
-                  minDate={moment()}
                   KeyboardButtonProps={{
                     'aria-label': 'Zmień datę',
                   }}
