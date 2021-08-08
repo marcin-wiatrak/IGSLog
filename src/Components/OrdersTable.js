@@ -39,7 +39,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [iterator, setIterator] = useState();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { usersList, orders, customersList } = useContext(AuthContext);
+  const { usersList, orders, customersList, specialDrivers } =
+    useContext(AuthContext);
 
   useEffect(() => {
     const configRef = fireDB.database().ref('Config').child('Iterator');
@@ -49,12 +50,16 @@ const OrdersTable = ({ tab, disableFilter }) => {
     });
   }, []);
 
+  console.log(usersList, specialDrivers);
+
   const filterTableRecords = () => orders.filter((item) => item.type === tab);
 
   const updateIterator = () => {
     const configRef = fireDB.database().ref('Config');
     configRef.update({ Iterator: iterator + 1 });
   };
+
+  if (!usersList && !customersList && !orders && !specialDrivers) return null;
 
   return (
     <>
@@ -123,7 +128,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
                         : ''}
                     </TableCell>
                     <TableCell style={{ fontSize: 12 }}>
-                      {usersList[employeeDriver]}
+                      {usersList[employeeDriver] ||
+                        specialDrivers[employeeDriver]}
                     </TableCell>
                     <TableCell>{usersList[employee]}</TableCell>
                     <TableCell>
