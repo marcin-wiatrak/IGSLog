@@ -15,6 +15,9 @@ export const AuthProvider = ({ children }) => {
     fireDB.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
       setPending(false);
+      getOrders();
+      getCustomers();
+      getUsers();
     });
   }, []);
 
@@ -29,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  useEffect(() => {
+  const getOrders = () => {
     const ordersRef = fireDB.database().ref('Orders');
     ordersRef.on('value', (snapshot) => {
       const ordersData = snapshot.val();
@@ -39,21 +42,21 @@ export const AuthProvider = ({ children }) => {
       }
       setOrders(ordersList);
     });
-  }, []);
+  };
 
-  useEffect(() => {
+  const getCustomers = () => {
     const customers = fireDB.database().ref('Customers');
     customers.on('value', (snapshot) => {
       const customers = snapshot.val();
       const customersList = [];
-      for (let item in customers) {
-        customersList.push(customers[item]);
+      for (let id in customers) {
+        customersList.push({ docId: id, ...customers[id] });
       }
       setCustomers(customersList);
     });
-  }, []);
+  };
 
-  useEffect(() => {
+  const getUsers = () => {
     const usersRef = fireDB.database().ref('Users');
     usersRef.on('value', (snapshot) => {
       const usersData = Object.entries(snapshot.val()).reduce(
@@ -65,8 +68,13 @@ export const AuthProvider = ({ children }) => {
       );
       setUsersList(usersData);
     });
-  }, []);
+  };
 
+  useEffect(() => {
+    getOrders();
+    getCustomers();
+    getUsers();
+  }, []);
 
   const customersList = customers.reduce((acc, item) => {
     acc[item.customerId] = item.companyName;
