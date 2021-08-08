@@ -48,6 +48,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
+  separator: {
+    height: 1,
+    backgroundColor: theme.palette.grey[400],
+  },
 }));
 
 const OrderDetails = () => {
@@ -58,13 +62,14 @@ const OrderDetails = () => {
   const [notes, setNotes] = useState();
   const [saveNotes, setSaveNotes] = useState(false);
   const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
-  const [assignEmployee, setAssignEmployee] = useState(null);
-  const [pickupDate, setPickupDate] = useState(null);
+  const [assignEmployee, setAssignEmployee] = useState('');
+  const [pickupDate, setPickupDate] = useState('');
   const [customer, setCustomer] = useState('');
   const [signature, setSignature] = useState('');
   const [changeSignature, setChangeSignature] = useState(false);
 
-  const { usersList, customersList, customers } = useContext(AuthContext);
+  const { usersList, customersList, customers, specialDrivers } =
+    useContext(AuthContext);
 
   const closeEmployeeMenu = () => setAssignEmployeeMenu(null);
 
@@ -81,12 +86,13 @@ const OrderDetails = () => {
       const singleOrderDetails = orderDetailsArray.find(
         (order) => order.id === parseInt(orderId)
       );
+      setSignature(singleOrderDetails.signature);
       setOrderDetail(singleOrderDetails);
       setNotes(singleOrderDetails.notes);
       setPickupDate(singleOrderDetails.pickupDate || null);
       setAssignEmployee(singleOrderDetails.employeeDriver || null);
     });
-  });
+  }, []);
 
   const updateOrder = () => {
     const configRef = fireDB.database().ref('Orders').child(orderDetail.order);
@@ -104,6 +110,9 @@ const OrderDetails = () => {
     closeEmployeeMenu();
   };
 
+  if (!usersList && !customersList && !customers && !specialDrivers)
+    return null;
+
   return (
     <div>
       <MainWrapper>
@@ -112,7 +121,7 @@ const OrderDetails = () => {
             <Typography className={classes.label} variant="body1">
               Zleceniodawca
             </Typography>
-            <Typography gutterBottom variant="body2">
+            <Typography gutterBottom variant="body2" component="div">
               {customersList[orderDetail.customer]}
               <Autocomplete
                 options={customers}
@@ -134,14 +143,16 @@ const OrderDetails = () => {
             <Typography className={classes.label} variant="body1">
               Sygnatura sprawy
             </Typography>
-            <Typography gutterBottom variant="body2">
-              {orderDetail.signature}
-              {changeSignature && (
+            <div className={classes.inlineDisplay}>
+              {changeSignature ? (
                 <TextField
                   value={signature}
                   onChange={(e) => setSignature(e.target.value)}
-                  label="Nowa sygnatura"
                 />
+              ) : (
+                <Typography gutterBottom variant="body2">
+                  {orderDetail.signature}
+                </Typography>
               )}
               <Button
                 variant="text"
@@ -151,7 +162,7 @@ const OrderDetails = () => {
               >
                 {changeSignature ? 'Anuluj' : 'Zmień'}
               </Button>
-            </Typography>
+            </div>
             <Typography className={classes.label} variant="body1">
               Data utworzenia
             </Typography>
@@ -165,7 +176,6 @@ const OrderDetails = () => {
               <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
                 <KeyboardDatePicker
                   format="DD MMM YYYY"
-                  label="Data odbioru"
                   value={pickupDate}
                   onChange={(date) => setPickupDate(moment(date).format())}
                   KeyboardButtonProps={{
@@ -183,6 +193,7 @@ const OrderDetails = () => {
             <Typography gutterBottom variant="body2">
               {(assignEmployee === null && 'brak') ||
                 usersList[assignEmployee] ||
+                specialDrivers[assignEmployee] ||
                 orderDetail.employeeDriver}
               <Button
                 variant="text"
@@ -245,6 +256,14 @@ const OrderDetails = () => {
           <MenuItem key="none" onClick={() => assignEmployeeHandler(null)}>
             USUŃ PRZYPISANIE
           </MenuItem>
+          <div className={classes.separator} />
+          {specialDrivers &&
+            Object.entries(specialDrivers).map(([id, name]) => (
+              <MenuItem key={id} onClick={() => assignEmployeeHandler(id)}>
+                {name}
+              </MenuItem>
+            ))}
+          <div className={classes.separator} />
           {Object.entries(usersList).map(([uId, name]) => (
             <MenuItem key={uId} onClick={() => assignEmployeeHandler(uId)}>
               {name}
