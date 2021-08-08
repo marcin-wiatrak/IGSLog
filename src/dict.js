@@ -3,4 +3,4 @@ export const typeTranslation = {
   fatherhood: 'Ustalanie ojcostwa',
   physicochemistry: 'Fizykochemia',
   toxicology: 'Toksykologia',
-}
+};

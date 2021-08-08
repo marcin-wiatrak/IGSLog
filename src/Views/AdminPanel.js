@@ -60,9 +60,6 @@ const AdminPanel = () => {
 
   const { usersList, orders, customersList } = useContext(AuthContext);
 
-  console.log(usersList);
-  console.log(customersList);
-
   const handleRegisterNewAccount = async (e) => {
     e.preventDefault();
     try {
@@ -107,7 +104,6 @@ const AdminPanel = () => {
     const findOrderWithId = orders.find(
       (order) => order.id === parseInt(idToRemove)
     );
-    console.log(findOrderWithId);
     if (findOrderWithId) {
       setOrderToRemove(findOrderWithId);
       setDialogOpen(true);
