@@ -4,8 +4,8 @@ import 'firebase/database';
 import 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDhgtW6nrmJGXXcOTDZHZnzvBWbgrtk1yM',
-  authDomain: 'igs-devdb.firebaseapp.com',
+  apiKey: 'AIzaSyAb0rqFKVo4ggjI2zWDCU125V0yfVOgVU4',
+  authDomain: 'igslog-33fe9.firebaseapp.com',
   databaseURL:
     'https://igslog-33fe9-default-rtdb.europe-west1.firebasedatabase.app',
   projectId: 'igslog-33fe9',
