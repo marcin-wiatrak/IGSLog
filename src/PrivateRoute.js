@@ -3,9 +3,10 @@ import { Route, Redirect } from 'react-router-dom';
 import { AuthContext } from './Auth';
 import moment from 'moment';
 import fireDB from './Firebase';
+import { checkPermissions } from './utils';
 
-const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
-  const { currentUser } = useContext(AuthContext);
+const PrivateRoute = ({ component: RouteComponent, permission, ...rest }) => {
+  const { currentUser, currentUserProfile } = useContext(AuthContext);
   const logoutTime = localStorage.getItem('logoutTime');
   return (
     <Route
@@ -14,15 +15,21 @@ const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
         if (logoutTime < moment().format() && currentUser) {
           fireDB.auth().signOut();
         }
-        localStorage.setItem(
-          'logoutTime',
-          moment().add(30, 'minutes').format()
-        );
-        return !!currentUser ? (
+        localStorage.setItem('logoutTime', moment().add(30, 'minutes').format());
+
+        return !!currentUser &&
+          checkPermissions(permission, currentUserProfile.permissions) ? (
           <RouteComponent {...routeProps} />
         ) : (
           <Redirect to={'/login'} />
         );
+
+        // if (!!currentUser) {
+        //   if (checkPermissions(permission, currentUserProfile.permissions)) {
+        //     return <RouteComponent {...routeProps} />;
+        //   } else {
+        //     return <Redirect to={'/dashboard'} />;
+        //   }
       }}
     />
   );

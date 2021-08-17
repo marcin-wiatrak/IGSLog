@@ -15,6 +15,9 @@ import {
   Tune,
 } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../Auth';
+import { checkPermissions } from '../../utils';
 
 const useStyles = makeStyles((theme) => ({
   sideMenu: {
@@ -45,6 +48,8 @@ const useStyles = makeStyles((theme) => ({
 
 const SideMenu = () => {
   const classes = useStyles();
+  const { currentUserProfile } = useContext(AuthContext);
+  // if (!currentUserProfile) return null;
   return (
     <>
       <div className={classes.sideMenu}>
@@ -52,7 +57,7 @@ const SideMenu = () => {
           <ListItem
             button
             component={NavLink}
-            to="/"
+            to="/dashboard"
             exact
             activeClassName={classes['Mui-selectedd']}
           >
@@ -118,17 +123,19 @@ const SideMenu = () => {
             </ListItemIcon>
             <ListItemText primary="Zleceniodawcy" />
           </ListItem>
-          <ListItem
-            button
-            component={NavLink}
-            to="/admin"
-            activeClassName={classes['Mui-selectedd']}
-          >
-            <ListItemIcon>
-              <Tune />
-            </ListItemIcon>
-            <ListItemText primary="Administracja" />
-          </ListItem>
+          {checkPermissions('admin', currentUserProfile.permissions) && (
+            <ListItem
+              button
+              component={NavLink}
+              to="/admin"
+              activeClassName={classes['Mui-selectedd']}
+            >
+              <ListItemIcon>
+                <Tune />
+              </ListItemIcon>
+              <ListItemText primary="Administracja" />
+            </ListItem>
+          )}
         </List>
       </div>
     </>
