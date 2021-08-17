@@ -19,8 +19,8 @@ import {
 import fireDB from '../Firebase';
 import usersFirebase from '../UsersFirebase';
 import { Alert } from '@material-ui/lab';
-import { AuthContext } from '../Auth';
 import { typeTranslation } from '../dict';
+import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -59,7 +59,13 @@ const AdminPanel = () => {
   const [orderToRemove, setOrderToRemove] = useState(null);
   const [specialDriverName, setSpecialDriverName] = useState('');
 
-  const { usersList, orders, customersList, specialDrivers } = useContext(AuthContext);
+
+  const {
+    usersList,
+    orders,
+    customersList,
+    specialDrivers,
+  } = useContext(DataContext);
 
   const addSpecialDriversHandler = (e) => {
     e.preventDefault();
@@ -87,6 +93,8 @@ const AdminPanel = () => {
               lastName,
               email,
               initials: `${firstName[0]}${lastName[0]}`,
+              uId: data.user.uid,
+              permissions: ['user'],
             })
             .then(() => {
               setEmail('');
@@ -276,9 +284,8 @@ const AdminPanel = () => {
           <Paper square className={classes.paper}>
             <Typography variant="h5">Odbiorcy specjalni</Typography>
             {Object.entries(specialDrivers).map(([id, item], index) => (
-                <Typography key={id}>{`${index + 1}. ${item}`}</Typography>
-              )
-            )}
+              <Typography key={id}>{`${index + 1}. ${item}`}</Typography>
+            ))}
             <form onSubmit={addSpecialDriversHandler}>
               <TextField
                 label="Nazwa odbiorcy specjalnego"
