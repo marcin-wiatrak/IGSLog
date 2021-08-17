@@ -22,6 +22,7 @@ import React, { useContext, useState } from 'react';
 import { AuthContext } from '../Auth';
 import fireDB, { storage } from '../Firebase';
 import NewCustomerModalBody from './NewCustomerModalBody';
+import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
   modalWrapper: {
@@ -85,7 +86,8 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
   const [attachmentLink, setAttachmentLink] = useState('');
   const [fileName, setFileName] = useState('');
 
-  const { currentUser, customers } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
+  const { customers } = useContext(DataContext);
 
   const classes = useStyles();
 

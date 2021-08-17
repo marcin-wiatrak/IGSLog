@@ -19,7 +19,7 @@ import {
 import { useContext, useState } from 'react';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import NewCustomerModalBody from '../Components/NewCustomerModalBody';
-import { AuthContext } from '../Auth';
+import { DataContext } from '../Data';
 import { MoreHoriz } from '@material-ui/icons';
 import fireDB from '../Firebase';
 import { Alert } from '@material-ui/lab';
@@ -65,7 +65,7 @@ const Customers = () => {
   const [customerName, setCustomerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const { customers } = useContext(AuthContext);
+  const { customers } = useContext(DataContext);
 
   const openMenuHandler = (event, customer) => {
     setCustomerActionMenuOpen(event.currentTarget);

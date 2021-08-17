@@ -14,7 +14,7 @@ import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
 import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
 import { AuthContext } from '../../Auth';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
   },
   userMenu: {
+    minWidth: 300,
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
@@ -69,6 +70,11 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  const logOut = () => {
+    localStorage.clear();
+    fireDB.auth().signOut();
+  };
+
   setInterval(() => {
     const difference = moment(localStorage.getItem('logoutTime')).diff(
       moment()
@@ -95,7 +101,7 @@ const Header = () => {
             <IconButton onClick={openUserMenu}>
               <AccountCircle className={classes.lightIcon} />
             </IconButton>
-            <IconButton onClick={() => fireDB.auth().signOut()}>
+            <IconButton onClick={logOut}>
               <PowerSettingsNew className={classes.lightIcon} />
             </IconButton>
             <Menu

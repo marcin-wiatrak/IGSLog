@@ -17,8 +17,8 @@ import moment from 'moment';
 import fireDB from '../Firebase';
 import Statuses from './MainWrapper/Statuses';
 import NewOrderModalBody from './NewOrderModalBody';
-import { AuthContext } from '../Auth';
 import { AttachFile, Info } from '@material-ui/icons';
+import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
@@ -39,8 +39,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [iterator, setIterator] = useState();
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { usersList, orders, customersList, specialDrivers } =
-    useContext(AuthContext);
+  const { orders, customersList, specialDrivers, usersList } =
+    useContext(DataContext);
 
   useEffect(() => {
     const configRef = fireDB.database().ref('Config').child('Iterator');
@@ -49,8 +49,6 @@ const OrdersTable = ({ tab, disableFilter }) => {
       setIterator(iteratorVal);
     });
   }, []);
-
-  console.log(usersList, specialDrivers);
 
   const filterTableRecords = () => orders.filter((item) => item.type === tab);
 
