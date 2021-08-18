@@ -30,7 +30,6 @@ export const DataProvider = ({ children }) => {
         ordersList.push({ docId: id, ...ordersData[id] });
       }
       setOrders(ordersList);
-      console.log('Orders');
     });
   };
 
@@ -66,7 +65,6 @@ export const DataProvider = ({ children }) => {
         {}
       );
       setUsersList(usersData);
-      console.log('Users');
     });
   };
 
@@ -81,7 +79,6 @@ export const DataProvider = ({ children }) => {
         {}
       );
       setSpecialDrivers(specialDriversList);
-      console.log('Spec');
     });
   };
 
