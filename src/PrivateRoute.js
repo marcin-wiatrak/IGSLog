@@ -23,13 +23,6 @@ const PrivateRoute = ({ component: RouteComponent, permission, ...rest }) => {
         ) : (
           <Redirect to={'/login'} />
         );
-
-        // if (!!currentUser) {
-        //   if (checkPermissions(permission, currentUserProfile.permissions)) {
-        //     return <RouteComponent {...routeProps} />;
-        //   } else {
-        //     return <Redirect to={'/dashboard'} />;
-        //   }
       }}
     />
   );
