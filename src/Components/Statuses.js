@@ -4,9 +4,8 @@ import {
   NewReleases,
   FlightLand,
   FlightTakeoff,
-  Sync,
 } from '@material-ui/icons';
-import fireDB from '../../Firebase';
+import fireDB from '../Firebase';
 
 const useStyles = makeStyles({
   activee: {
@@ -28,24 +27,17 @@ const useStyles = makeStyles({
       borderBottom: 'solid 2px #a1a1a1',
     },
     '& > :nth-child(2):hover': {
-      borderBottom: 'solid 2px #ff0000',
-    },
-    '& > :nth-child(3):hover': {
       borderBottom: 'solid 2px #03a1fc',
     },
-    '& > :nth-child(4):hover': {
+    '& > :nth-child(3):hover': {
       borderBottom: 'solid 2px #f385ff',
     },
-    '& > :nth-child(5):hover': {
+    '& > :nth-child(4):hover': {
       borderBottom: 'solid 2px #00ba06',
     },
   },
   newTask: {
     backgroundColor: '#a1a1a1',
-    color: '#ffffff',
-  },
-  accepted: {
-    backgroundColor: '#ff0000',
     color: '#ffffff',
   },
   pickedUp: {
@@ -75,12 +67,6 @@ const Statuses = ({ status, docId }) => {
         <NewReleases
           onClick={() => changeStatusHandler('NEW_TASK', docId)}
           className={`${status === 'NEW_TASK' ? classes.newTask : ''}`}
-        />
-      </Tooltip>
-      <Tooltip title="W TRAKCIE REALIZACJI" arrow>
-        <Sync
-          onClick={() => changeStatusHandler('ACCEPTED', docId)}
-          className={`${status === 'ACCEPTED' ? classes.accepted : ''}`}
         />
       </Tooltip>
       <Tooltip title="ODBIÓR USTALONY" arrow>

@@ -8,9 +8,9 @@ import {
   Snackbar,
 } from '@material-ui/core';
 import { useContext, useState } from 'react';
-import { AuthContext } from '../Auth';
 import fireDB from '../Firebase';
 import { Alert } from '@material-ui/lab';
+import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const UserProfile = () => {
   const classes = useStyles();
-  const { currentUserProfile } = useContext(AuthContext);
+  const { currentUserProfile } = useContext(DataContext);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [snackbar, setSnackbar] = useState('');
 
