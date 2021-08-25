@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import moment from 'moment';
 import fireDB from '../Firebase';
 import Statuses from './MainWrapper/Statuses';
@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 200,
     },
   },
+  separator: {
+    height: 1,
+    backgroundColor: theme.palette.grey[400],
+  },
 }));
 
 const OrdersTable = ({ tab, disableFilter }) => {
@@ -56,10 +60,11 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [iterator, setIterator] = useState();
   const [modalOpen, setModalOpen] = useState(false);
   const [customerFilter, setCustomerFilter] = useState('');
+  const [driverFilter, setDriverFilter] = useState('');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
 
-  const { orders, customersList, specialDrivers, usersList } =
+  const { orders, customersList, specialDrivers, usersList, rawUsersList } =
     useContext(DataContext);
 
   useEffect(() => {
@@ -75,6 +80,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
       (item) =>
         item.type === tab &&
         (customerFilter ? item.customer === parseInt(customerFilter) : true) &&
+        (driverFilter ? item.employeeDriver === driverFilter : true) &&
         (filterDateFrom
           ? moment(item.createDate).format('YYYYMMDD') >=
             moment(filterDateFrom).format('YYYYMMDD')
@@ -127,9 +133,36 @@ const OrdersTable = ({ tab, disableFilter }) => {
               onChange={(e) => setCustomerFilter(e.target.value)}
             >
               <MenuItem value="">BRAK</MenuItem>
+              <div className={classes.separator} />
               {Object.entries(customersList).map(([id, name]) => (
                 <MenuItem key={id} value={id}>
                   {name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              size="small"
+              select
+              label="Odbiorca"
+              value={driverFilter}
+              onChange={(e) => setDriverFilter(e.target.value)}
+            >
+              <MenuItem key="none" value="">
+                BRAK
+              </MenuItem>
+              <div className={classes.separator} />
+              {specialDrivers &&
+                Object.entries(specialDrivers).map(([id, name]) => (
+                  <MenuItem key={id} value={id}>
+                    {name}
+                  </MenuItem>
+                ))}
+              <div className={classes.separator} />
+              {Object.entries(rawUsersList)
+                .filter(([uId, user]) => !user.hidden)
+                .map(([uId, user]) => (
+                <MenuItem key={uId} value={uId}>
+                  {`${user.firstName} ${user.lastName}`}
                 </MenuItem>
               ))}
             </TextField>

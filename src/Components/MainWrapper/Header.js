@@ -13,9 +13,9 @@ import {
 import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
 import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
-import { AuthContext } from '../../Auth';
 import { Link, Redirect } from 'react-router-dom';
 import moment from 'moment';
+import { DataContext } from '../../Data';
 
 const useStyles = makeStyles((theme) => ({
   lightIcon: {
@@ -54,9 +54,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
+const Header = ({ history }) => {
   const classes = useStyles();
-  const { currentUserProfile } = useContext(AuthContext);
+  const { currentUserProfile } = useContext(DataContext);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [logoutTime, setLogoutTime] = useState('30');
@@ -71,8 +71,9 @@ const Header = () => {
   };
 
   const logOut = () => {
-    localStorage.clear();
+    localStorage.removeItem('authToken');
     fireDB.auth().signOut();
+    return <Redirect to={'/'} />;
   };
 
   setInterval(() => {
