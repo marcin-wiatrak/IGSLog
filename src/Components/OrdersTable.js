@@ -12,14 +12,28 @@ import {
   Modal,
   TextField,
   MenuItem,
+  Select,
+  Input,
+  ListItemIcon,
+  ListItemText,
+  ListItem, Typography
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from 'react';
 import moment from 'moment';
 import fireDB from '../Firebase';
-import Statuses from './MainWrapper/Statuses';
+import Statuses from './Statuses';
 import NewOrderModalBody from './NewOrderModalBody';
-import { AttachFile, Clear, Info } from '@material-ui/icons';
+import {
+  AllInclusive,
+  AssignmentTurnedIn,
+  AttachFile,
+  Clear,
+  FlightLand,
+  FlightTakeoff,
+  Info,
+  NewReleases,
+} from '@material-ui/icons';
 import { DataContext } from '../Data';
 import {
   KeyboardDatePicker,
@@ -41,17 +55,39 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   filtersWrapper: {
+    position: 'relative',
     display: 'flex',
-    alignItems: 'center',
-    marginLeft: theme.spacing(2),
-    '& > *': {
+    alignItems: 'flex-end',
+    flexWrap: 'wrap',
+    borderColor: theme.palette.grey[300],
+    border: '1px solid',
+    borderRadius: 10,
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    '& > *:not(:first-child)': {
       marginRight: theme.spacing(2),
       minWidth: 200,
     },
   },
+  filtersLabel: {
+    position: 'absolute',
+    top: -15,
+    left: 15,
+    backgroundColor: theme.palette.common.white,
+  },
   separator: {
     height: 1,
     backgroundColor: theme.palette.grey[400],
+  },
+  statusSelect: {
+    maxHeight: 48,
+    '& .MuiSelect-root': {
+      display: 'flex',
+      // padding: 0,
+      '& > .MuiListItemIcon-root': {
+        minWidth: 32,
+      },
+    },
   },
 }));
 
@@ -63,6 +99,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [driverFilter, setDriverFilter] = useState('');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
 
   const { orders, customersList, specialDrivers, usersList, rawUsersList } =
     useContext(DataContext);
@@ -88,7 +125,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
         (filterDateTo
           ? moment(item.createDate).format('YYYYMMDD') <=
             moment(filterDateTo).format('YYYYMMDD')
-          : true)
+          : true) &&
+        (filterStatus ? item.status === filterStatus : true)
     );
 
   const updateIterator = () => {
@@ -124,79 +162,119 @@ const OrdersTable = ({ tab, disableFilter }) => {
           >
             Nowe zlecenie
           </Button>
-          <div className={classes.filtersWrapper}>
-            <TextField
-              size="small"
-              select
-              label="Zleceniodawca"
-              value={customerFilter}
-              onChange={(e) => setCustomerFilter(e.target.value)}
-            >
-              <MenuItem value="">BRAK</MenuItem>
-              <div className={classes.separator} />
-              {Object.entries(customersList).map(([id, name]) => (
+        </div>
+        <div className={classes.filtersWrapper}>
+          <Typography className={classes.filtersLabel} color="textSecondary" variant="h6">Filtry</Typography>
+          <TextField
+            size="small"
+            select
+            label="Zleceniodawca"
+            value={customerFilter}
+            onChange={(e) => setCustomerFilter(e.target.value)}
+          >
+            <MenuItem value="">BRAK</MenuItem>
+            <div className={classes.separator} />
+            {Object.entries(customersList).map(([id, name]) => (
+              <MenuItem key={id} value={id}>
+                {name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            size="small"
+            select
+            label="Odbiorca"
+            value={driverFilter}
+            onChange={(e) => setDriverFilter(e.target.value)}
+          >
+            <MenuItem key="none" value="">
+              BRAK
+            </MenuItem>
+            <div className={classes.separator} />
+            {specialDrivers &&
+              Object.entries(specialDrivers).map(([id, name]) => (
                 <MenuItem key={id} value={id}>
                   {name}
                 </MenuItem>
               ))}
-            </TextField>
-            <TextField
-              size="small"
-              select
-              label="Odbiorca"
-              value={driverFilter}
-              onChange={(e) => setDriverFilter(e.target.value)}
-            >
-              <MenuItem key="none" value="">
-                BRAK
-              </MenuItem>
-              <div className={classes.separator} />
-              {specialDrivers &&
-                Object.entries(specialDrivers).map(([id, name]) => (
-                  <MenuItem key={id} value={id}>
-                    {name}
-                  </MenuItem>
-                ))}
-              <div className={classes.separator} />
-              {Object.entries(rawUsersList)
-                .filter(([uId, user]) => !user.hidden)
-                .map(([uId, user]) => (
+            <div className={classes.separator} />
+            {Object.entries(rawUsersList)
+              .filter(([uId, user]) => !user.hidden)
+              .map(([uId, user]) => (
                 <MenuItem key={uId} value={uId}>
                   {`${user.firstName} ${user.lastName}`}
                 </MenuItem>
               ))}
-            </TextField>
-            <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
-              <KeyboardDatePicker
-                autoOk
-                label="Utworzone od"
-                format="DD/MM/YYYY"
-                value={filterDateFrom ? moment(filterDateFrom).format() : null}
-                onChange={(date) => setFilterDateFrom(moment(date).format())}
-                InputProps={{
-                  startAdornment: (
-                    <IconButton size="small" onClick={(e) => clrDateFrom(e)}>
-                      <Clear />
-                    </IconButton>
-                  ),
-                }}
-              />
-              <KeyboardDatePicker
-                autoOk
-                label="Utworzone do"
-                format="DD/MM/YYYY"
-                value={filterDateTo ? moment(filterDateTo).format() : null}
-                onChange={(date) => setFilterDateTo(moment(date).format())}
-                InputProps={{
-                  startAdornment: (
-                    <IconButton size="small" onClick={(e) => clrDateTo(e)}>
-                      <Clear />
-                    </IconButton>
-                  ),
-                }}
-              />
-            </MuiPickersUtilsProvider>
-          </div>
+          </TextField>
+          <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
+            <KeyboardDatePicker
+              autoOk
+              label="Utworzone od"
+              format="DD/MM/YYYY"
+              value={filterDateFrom ? moment(filterDateFrom).format() : null}
+              onChange={(date) => setFilterDateFrom(moment(date).format())}
+              InputProps={{
+                startAdornment: (
+                  <IconButton size="small" onClick={(e) => clrDateFrom(e)}>
+                    <Clear />
+                  </IconButton>
+                ),
+              }}
+            />
+            <KeyboardDatePicker
+              autoOk
+              label="Utworzone do"
+              format="DD/MM/YYYY"
+              value={filterDateTo ? moment(filterDateTo).format() : null}
+              onChange={(date) => setFilterDateTo(moment(date).format())}
+              InputProps={{
+                startAdornment: (
+                  <IconButton size="small" onClick={(e) => clrDateTo(e)}>
+                    <Clear />
+                  </IconButton>
+                ),
+              }}
+            />
+          </MuiPickersUtilsProvider>
+          <TextField
+            size="small"
+            label="Status"
+            select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className={classes.statusSelect}
+          >
+            <MenuItem value="">
+              <ListItemIcon>
+                <AllInclusive color="primary" />
+              </ListItemIcon>
+              <ListItemText primary="Wszystkie" />
+            </MenuItem>
+            <MenuItem value="NEW_TASK">
+              <ListItemIcon>
+                <NewReleases />
+              </ListItemIcon>
+              <ListItemText primary="Zarejestrowane" />
+            </MenuItem>
+            <MenuItem value="PICKED_UP">
+              <ListItemIcon>
+                <FlightTakeoff style={{ color: '#03a1fc' }} />
+              </ListItemIcon>
+              <ListItemText primary="Odebrane" />
+            </MenuItem>
+            <MenuItem value="DELIVERED">
+              <ListItemIcon>
+                <FlightLand style={{ color: '#f385ff' }} />
+              </ListItemIcon>
+              <ListItemText primary="Dostarczone" />
+            </MenuItem>
+            <MenuItem value="CLOSED">
+              <ListItemIcon>
+                <AssignmentTurnedIn style={{ color: '#00ba06' }} />
+              </ListItemIcon>
+              <ListItemText primary="Przekazane na dział" />
+            </MenuItem>
+          </TextField>
         </div>
         <Table size="small" className={classes.table}>
           <TableHead>
