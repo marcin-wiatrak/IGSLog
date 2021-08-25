@@ -5,21 +5,35 @@ import { AuthContext } from './Auth';
 export const DataContext = React.createContext();
 
 export const DataProvider = ({ children }) => {
-  const [pending, setPending] = useState(true);
   const [usersList, setUsersList] = useState(null);
   const [customers, setCustomers] = useState();
   const [customersList, setCustomersList] = useState();
   const [orders, setOrders] = useState();
   const [specialDrivers, setSpecialDrivers] = useState();
+  const [rawUsersList, setRawUsersList] = useState();
+  const [currentUserProfile, setCurrentUserProfile] = useState();
+  const [dataReady, setDataReady] = useState(false);
 
   const { currentUser } = useContext(AuthContext);
 
   useEffect(() => {
-    getOrders();
-    getCustomers();
-    getUsers();
-    getSpecialDrivers();
+    if (currentUser) {
+      getUserDetails();
+      getOrders();
+      getCustomers();
+      getUsers();
+      getSpecialDrivers();
+    }
   }, [currentUser]);
+
+  const getUserDetails = async () => {
+    const ref = await fireDB.database().ref(`Users/${currentUser.uid}`);
+    ref.on('value', (snapshot) => {
+      const val = snapshot.val();
+      console.log(val);
+      setCurrentUserProfile(val);
+    });
+  };
 
   const getOrders = async () => {
     const ordersRef = fireDB.database().ref('Orders');
@@ -57,13 +71,12 @@ export const DataProvider = ({ children }) => {
   const getUsers = async () => {
     const usersRef = fireDB.database().ref('Users');
     await usersRef.on('value', (snapshot) => {
-      const usersData = Object.entries(snapshot.val()).reduce(
-        (acc, [id, user]) => {
-          acc[id] = `${user.firstName} ${user.lastName}`;
-          return acc;
-        },
-        {}
-      );
+      const data = snapshot.val();
+      const usersData = Object.entries(data).reduce((acc, [id, user]) => {
+        acc[id] = `${user.firstName} ${user.lastName}`;
+        return acc;
+      }, {});
+      setRawUsersList(data);
       setUsersList(usersData);
     });
   };
@@ -83,15 +96,26 @@ export const DataProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (usersList && customers && customersList && orders && specialDrivers) {
-      setPending(false);
+    if (
+      usersList &&
+      customers &&
+      customersList &&
+      orders &&
+      specialDrivers &&
+      currentUserProfile
+    ) {
+      setDataReady(true);
     }
-    if (!usersList && !customers && !customersList && !orders && !specialDrivers) {
-      setPending(false);
-    }
-  }, [usersList, customers, customersList, orders, specialDrivers]);
+  }, [
+    usersList,
+    customers,
+    customersList,
+    orders,
+    specialDrivers,
+    currentUserProfile,
+  ]);
 
-  if (pending) return <>Ładowanie danych...</>;
+  // if (!dataReady) return <>Ładowanie danych...</>;
 
   return (
     <DataContext.Provider
@@ -101,6 +125,9 @@ export const DataProvider = ({ children }) => {
         customers,
         usersList,
         specialDrivers,
+        rawUsersList,
+        currentUserProfile,
+        dataReady,
       }}
     >
       {children}

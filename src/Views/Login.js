@@ -7,10 +7,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import { AlternateEmail, Lock, PlayArrow } from '@material-ui/icons';
-import { useState, useContext } from 'react';
-import { Redirect } from 'react-router';
-import { AuthContext } from '../Auth';
+import { useState, useContext, useEffect } from 'react';
 import fireDB from '../Firebase';
+import { AuthContext } from '../Auth';
+import { Redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,13 +34,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Login = () => {
+const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-
   const { currentUser } = useContext(AuthContext);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (currentUser && localStorage.getItem('authToken')) {
+      history.push('/dashboard')
+    }
+  }, [currentUser]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -54,10 +59,6 @@ const Login = () => {
         : setLoginError('Błędny email lub hasło');
     }
   };
-
-  if (currentUser) {
-    return <Redirect to="/dashboard" />;
-  }
 
   return (
     <div className={classes.root}>

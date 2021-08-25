@@ -16,8 +16,8 @@ import {
 } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 import { useContext } from 'react';
-import { AuthContext } from '../../Auth';
 import { checkPermissions } from '../../utils';
+import { DataContext } from '../../Data';
 
 const useStyles = makeStyles((theme) => ({
   sideMenu: {
@@ -48,8 +48,8 @@ const useStyles = makeStyles((theme) => ({
 
 const SideMenu = () => {
   const classes = useStyles();
-  const { currentUserProfile } = useContext(AuthContext);
-  // if (!currentUserProfile) return null;
+  const { currentUserProfile } = useContext(DataContext);
+  if (!currentUserProfile) return null;
   return (
     <>
       <div className={classes.sideMenu}>

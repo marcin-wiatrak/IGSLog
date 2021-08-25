@@ -59,8 +59,8 @@ const AdminPanel = () => {
   const [orderToRemove, setOrderToRemove] = useState(null);
   const [specialDriverName, setSpecialDriverName] = useState('');
 
-
   const {
+    rawUsersList,
     usersList,
     orders,
     customersList,
@@ -173,6 +173,8 @@ const AdminPanel = () => {
     }
   };
 
+  console.log(Object.entries(rawUsersList));
+
   return (
     <MainWrapper>
       <Typography
@@ -254,8 +256,10 @@ const AdminPanel = () => {
           <Paper square className={classes.paper}>
             <Typography variant="h5">Lista pracowników:</Typography>
             <div>
-              {Object.entries(usersList).map(([uId, name], index) => (
-                <Typography key={uId}>{`${index + 1}. ${name}`}</Typography>
+              {Object.entries(rawUsersList)
+                .filter(([uId, user]) => !user.hidden)
+                .map(([uId, user], index) => (
+                <Typography key={uId}>{`${index + 1}. ${user.firstName} ${user.lastName}`}</Typography>
               ))}
             </div>
           </Paper>

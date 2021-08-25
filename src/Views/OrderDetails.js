@@ -11,8 +11,13 @@ import {
   MenuItem,
   FormGroup,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  LinearProgress,
+  DialogActions,
 } from '@material-ui/core';
-import fireDB from '../Firebase';
+import fireDB, { storage } from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { Alert, Autocomplete } from '@material-ui/lab';
@@ -21,7 +26,7 @@ import {
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import { Clear } from '@material-ui/icons';
+import { AttachFile, Clear } from '@material-ui/icons';
 import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
@@ -52,6 +57,13 @@ const useStyles = makeStyles((theme) => ({
     height: 1,
     backgroundColor: theme.palette.grey[400],
   },
+  rowSeparatedDisplay: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  alignRight: {
+    textAlign: 'right',
+  },
 }));
 
 const OrderDetails = () => {
@@ -67,6 +79,9 @@ const OrderDetails = () => {
   const [customer, setCustomer] = useState('');
   const [signature, setSignature] = useState('');
   const [changeSignature, setChangeSignature] = useState(false);
+  const [fileUploadModal, setFileUploadModal] = useState(false);
+  const [file, setFile] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { usersList, customersList, customers, specialDrivers } =
     useContext(DataContext);
@@ -86,6 +101,7 @@ const OrderDetails = () => {
       const singleOrderDetails = orderDetailsArray.find(
         (order) => order.id === parseInt(orderId)
       );
+      console.log(singleOrderDetails);
       setSignature(singleOrderDetails.signature);
       setOrderDetail(singleOrderDetails);
       setNotes(singleOrderDetails.notes);
@@ -110,6 +126,54 @@ const OrderDetails = () => {
     closeEmployeeMenu();
   };
 
+  const openFileUploadModal = () => setFileUploadModal(true);
+
+  const closeFileUploadModal = () => {
+    setFileUploadModal(false);
+    setFile('');
+    setUploadProgress(0);
+  };
+
+  const uploadFile = (e) => {
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
+      // generateFileName(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = () => {
+    const uploadTask = storage.ref(`files/${file.name}`).put(file);
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        storage
+          .ref('files')
+          .child(file.name)
+          .getDownloadURL()
+          .then((url) => {
+            setAttachmentLink(url);
+            closeFileUploadModal();
+          });
+      }
+    );
+  };
+
+  const setAttachmentLink = (attachmentLink) => {
+    const Ref = fireDB.database().ref('Orders').child(orderDetail.order);
+    Ref.update({
+      attachmentLink,
+    });
+  };
+
   if (!usersList && !customersList && !customers && !specialDrivers)
     return null;
 
@@ -118,6 +182,39 @@ const OrderDetails = () => {
       <MainWrapper>
         {orderDetail && (
           <Paper className={classes.paper}>
+            <div className={classes.rowSeparatedDisplay}>
+              <Typography variant="h4" color="textSecondary">
+                Zlecenie #{orderDetail.id}
+              </Typography>
+              <div className={classes.alignRight}>
+                <Typography className={classes.label} variant="body1">
+                  Załącznik
+                </Typography>
+                <IconButton
+                  component="a"
+                  href={orderDetail.attachmentLink}
+                  size="small"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  disabled={!orderDetail.attachmentLink}
+                >
+                  <AttachFile
+                    color={
+                      !!orderDetail.attachmentLink ? 'secondary' : 'disabled'
+                    }
+                  />
+                </IconButton>
+                {!orderDetail.attachmentLink && (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={openFileUploadModal}
+                  >
+                    Dodaj
+                  </Button>
+                )}
+              </div>
+            </div>
             <Typography className={classes.label} variant="body1">
               Zleceniodawca
             </Typography>
@@ -271,6 +368,58 @@ const OrderDetails = () => {
           ))}
         </Menu>
       </MainWrapper>
+      <Dialog
+        open={fileUploadModal}
+        disableBackdropClick
+        PaperProps={{
+          style: {
+            minWidth: 550,
+          },
+        }}
+      >
+        <DialogTitle>Dodaj załącznik</DialogTitle>
+        <DialogContent>
+          <Button
+            variant="contained"
+            component="label"
+            color="primary"
+            fullWidth
+          >
+            Wybierz plik
+            <input type="file" hidden onChange={uploadFile} key={file.name} />
+          </Button>
+          <LinearProgress
+            variant="determinate"
+            value={uploadProgress}
+            style={{ margin: '10px auto' }}
+          />
+          {file && (
+            <Typography variant="body2" className={classes.margin1}>
+              Wybrany plik: {file.name}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            disabled={uploadProgress > 0 && uploadProgress < 100}
+            onClick={closeFileUploadModal}
+          >
+            {uploadProgress > 0 || uploadProgress === 100
+              ? 'Zamknij'
+              : 'Anuluj'}
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUpload}
+            disabled={
+              uploadProgress > 0 || (orderDetail && orderDetail.attachmentLink)
+            }
+          >
+            Dodaj załącznik
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
