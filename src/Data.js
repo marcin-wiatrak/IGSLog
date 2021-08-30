@@ -30,7 +30,6 @@ export const DataProvider = ({ children }) => {
     const ref = await fireDB.database().ref(`Users/${currentUser.uid}`);
     ref.on('value', (snapshot) => {
       const val = snapshot.val();
-      console.log(val);
       setCurrentUserProfile(val);
     });
   };

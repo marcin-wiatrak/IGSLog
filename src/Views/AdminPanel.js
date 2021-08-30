@@ -173,8 +173,6 @@ const AdminPanel = () => {
     }
   };
 
-  console.log(Object.entries(rawUsersList));
-
   return (
     <MainWrapper>
       <Typography
