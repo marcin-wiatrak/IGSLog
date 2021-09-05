@@ -10,14 +10,35 @@ import {
   Modal,
   Paper,
 } from '@material-ui/core';
-import { AccountCircle, PowerSettingsNew } from '@material-ui/icons';
+import {
+  AccountCircle,
+  PowerSettingsNew,
+  Menu as MenuIcon,
+} from '@material-ui/icons';
 import { useContext, useState } from 'react';
 import fireDB from '../../Firebase';
 import { Link, Redirect } from 'react-router-dom';
 import moment from 'moment';
 import { DataContext } from '../../Data';
+import classNames from 'classnames';
+
+const drawerWidth = 270;
 
 const useStyles = makeStyles((theme) => ({
+  appBar: {
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(['margin', 'width'], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
   lightIcon: {
     color: theme.palette.common.white,
   },
@@ -54,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ history }) => {
+const Header = ({ history, toggleMenuOpen, menuOpen }) => {
   const classes = useStyles();
   const { currentUserProfile } = useContext(DataContext);
 
@@ -89,13 +110,21 @@ const Header = ({ history }) => {
   }, 1000);
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      className={classNames(classes.appBar, {
+        [classes.appBarShift]: menuOpen,
+      })}
+    >
       <Toolbar>
         <Grid container>
           <Grid item>
-            <Typography>
-              {`Wylogowanie nastąpi za ${logoutTime} minut`}
-            </Typography>
+            <IconButton
+              onClick={toggleMenuOpen}
+              edge="start"
+            >
+              <MenuIcon className={classes.lightIcon} />
+            </IconButton>
           </Grid>
           <Grid item sm />
           <Grid item>

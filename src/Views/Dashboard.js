@@ -13,15 +13,15 @@ import {
 import React, { useContext } from 'react';
 import { DataContext } from '../Data';
 import {
-  AllInclusive,
   AssignmentTurnedIn,
   DeviceHub,
   Eco,
-  Face, FiberManualRecord,
+  Face,
+  FiberManualRecord,
   FlightLand,
   FlightTakeoff,
   NewReleases,
-  Spa
+  Spa,
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
