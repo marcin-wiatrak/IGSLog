@@ -250,7 +250,7 @@ const NewOrderModalBody = ({ setModalOpen, iterator, updateIterator, tab }) => {
             fullWidth
             margin="normal"
             onChange={(e) => setSignature(e.target.value)}
-            disabled={fileName}
+            disabled={!!fileName}
           />
           <TextField
             label="Notatki"

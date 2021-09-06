@@ -12,11 +12,10 @@ import {
   Modal,
   TextField,
   MenuItem,
-  Select,
-  Input,
   ListItemIcon,
   ListItemText,
-  ListItem, Typography
+  Typography,
+  TableSortLabel,
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useContext } from 'react';
@@ -41,6 +40,8 @@ import {
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import 'moment/locale/pl';
+import * as R from 'ramda';
+import { Autocomplete } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
   controlsWrapper: {
@@ -100,9 +101,23 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [usersFilter, setUsersFilter] = useState('');
+  const [sortingType, setSortingType] = useState('id');
+  const [sortingDirection, setSortingDirection] = useState('asc');
 
   const { orders, customersList, specialDrivers, usersList, rawUsersList } =
     useContext(DataContext);
+
+  const labels = [
+    ['id', 'ID'],
+    ['customerName', 'Zleceniodawca'],
+    ['signature', 'Sygnatura'],
+    ['createDate', 'Data utworzenia'],
+    ['pickupDate', 'Data odbioru'],
+    ['employeeDriverName', 'Odbiorca'],
+    ['employee', 'Os. odp.'],
+    ['status', 'Status'],
+  ];
 
   useEffect(() => {
     const configRef = fireDB.database().ref('Config').child('Iterator');
@@ -112,12 +127,15 @@ const OrdersTable = ({ tab, disableFilter }) => {
     });
   }, []);
 
+  const usersListAC = Object.entries(rawUsersList).map((item) => item[1]);
+
   const filterTableRecords = () =>
     orders.filter(
       (item) =>
         item.type === tab &&
         (customerFilter ? item.customer === parseInt(customerFilter) : true) &&
         (driverFilter ? item.employeeDriver === driverFilter : true) &&
+        (usersFilter ? item.employee === usersFilter : true) &&
         (filterDateFrom
           ? moment(item.createDate).format('YYYYMMDD') >=
             moment(filterDateFrom).format('YYYYMMDD')
@@ -144,6 +162,41 @@ const OrdersTable = ({ tab, disableFilter }) => {
     setFilterDateTo(null);
   };
 
+  const sortData = (arr) => {
+    const preparedArr = arr.reduce((acc, item) => {
+      item.customerName = customersList[item.customer];
+      item.employeeDriverName =
+        usersList[item.employeeDriver] || specialDrivers[item.employeeDriver];
+      acc = [...acc, item];
+      return acc;
+    }, []);
+    const sortingFn =
+      sortingDirection === 'asc'
+        ? R.sortWith([R.ascend(R.prop(sortingType) || '')])
+        : R.sortWith([R.descend(R.prop(sortingType) || '')]);
+    return sortingFn(preparedArr);
+  };
+
+  const handleRequestSort = (property) => {
+    const direction = sortingType === property && sortingDirection === 'asc';
+    setSortingDirection(direction ? 'desc' : 'asc');
+    setSortingType(property);
+  };
+
+  const generateSortingTableLabels = () => {
+    return labels.map(([type, label]) => (
+      <TableCell key={type}>
+        <TableSortLabel
+          active={sortingType === type}
+          direction={sortingType === type ? sortingDirection : 'asc'}
+          onClick={() => handleRequestSort(type)}
+        >
+          {label}
+        </TableSortLabel>
+      </TableCell>
+    ));
+  };
+
   if (!usersList && !customersList && !orders && !specialDrivers) return null;
 
   return (
@@ -164,7 +217,28 @@ const OrdersTable = ({ tab, disableFilter }) => {
           </Button>
         </div>
         <div className={classes.filtersWrapper}>
-          <Typography className={classes.filtersLabel} color="textSecondary" variant="h6">Filtry</Typography>
+          <Typography
+            className={classes.filtersLabel}
+            color="textSecondary"
+            variant="h6"
+          >
+            Filtry
+          </Typography>
+          <Autocomplete
+            size="small"
+            options={usersListAC}
+            // key={customerReset}
+            getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+            onChange={(e, newValue) => setUsersFilter(newValue && newValue.uId)}
+            openOnFocus
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Os. odpowiedzialna"
+                value={usersFilter}
+              />
+            )}
+          />
           <TextField
             size="small"
             select
@@ -279,14 +353,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
         <Table size="small" className={classes.table}>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>ZLECENIODAWCA</TableCell>
-              <TableCell>SYGNATURA SPRAWY</TableCell>
-              <TableCell>DATA UTWORZENIA</TableCell>
-              <TableCell>DATA ODBIORU</TableCell>
-              <TableCell>ODBIORCA</TableCell>
-              <TableCell>OS. ODP.</TableCell>
-              <TableCell>STATUS ZLECENIA</TableCell>
+              {generateSortingTableLabels()}
               <TableCell padding="none" />
             </TableRow>
           </TableHead>
@@ -298,7 +365,8 @@ const OrdersTable = ({ tab, disableFilter }) => {
                 </TableCell>
               </TableRow>
             ) : (
-              ((disableFilter && orders) || filterTableRecords()).map(
+              (disableFilter && orders) ||
+              sortData(filterTableRecords()).map(
                 ({
                   id,
                   docId,

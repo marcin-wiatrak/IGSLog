@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
     borderTop: `1px solid ${theme.palette.grey[400]}`,
     marginTop: theme.spacing(2),
     paddingTop: theme.spacing(2),
+    '& > button': {
+      margin: '0 8px',
+    },
   },
   inlineDisplay: {
     display: 'flex',
@@ -101,7 +104,6 @@ const OrderDetails = () => {
       const singleOrderDetails = orderDetailsArray.find(
         (order) => order.id === parseInt(orderId)
       );
-      console.log(singleOrderDetails);
       setSignature(singleOrderDetails.signature);
       setOrderDetail(singleOrderDetails);
       setNotes(singleOrderDetails.notes);
@@ -316,6 +318,14 @@ const OrderDetails = () => {
               style={{ marginTop: 25 }}
             />
             <div className={classes.actionFooter}>
+              <Button
+                color="primary"
+                onClick={() => {
+                  history.goBack();
+                }}
+              >
+                Powrót
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
