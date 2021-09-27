@@ -14,6 +14,7 @@ import {
   People,
   Dashboard,
   Tune,
+  Today,
 } from '@material-ui/icons';
 import { NavLink } from 'react-router-dom';
 import { useContext } from 'react';
@@ -136,6 +137,18 @@ const SideMenu = ({ menuOpen }) => {
                 <People />
               </ListItemIcon>
               <ListItemText primary="Zleceniodawcy" />
+            </ListItem>
+            <ListItem
+              button
+              component={NavLink}
+              to="/kalendarz"
+              activeClassName={classes['Mui-selectedd']}
+              style={{ display: 'none' }}
+            >
+              <ListItemIcon>
+                <Today />
+              </ListItemIcon>
+              <ListItemText primary="Kalendarz" />
             </ListItem>
             {checkPermissions('admin', currentUserProfile.permissions) && (
               <ListItem
