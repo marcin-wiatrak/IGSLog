@@ -12,6 +12,7 @@ import AdminPanel from './Views/AdminPanel';
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router';
 import { DataContext } from './Data';
+import Calendar from './Views/Calendar';
 
 const Root = () => {
   const { dataReady } = useContext(DataContext);
@@ -70,6 +71,12 @@ const Root = () => {
         exact
         path="/zlecenie/:orderId"
         component={OrderDetails}
+        permission="user"
+      />
+      <PrivateRoute
+        exact
+        path="/kalendarz"
+        component={Calendar}
         permission="user"
       />
       <PrivateRoute
