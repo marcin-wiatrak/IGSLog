@@ -22,8 +22,9 @@ import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { Alert, Autocomplete } from '@material-ui/lab';
 import {
+  DatePicker,
   KeyboardDatePicker,
-  MuiPickersUtilsProvider,
+  MuiPickersUtilsProvider
 } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import { AttachFile, Clear } from '@material-ui/icons';
@@ -40,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(3),
+    maxWidth: 500,
+    margin: '0 auto',
   },
   actionFooter: {
     display: 'flex',
@@ -75,6 +78,7 @@ const OrderDetails = () => {
   const classes = useStyles();
   const [orderDetail, setOrderDetail] = useState();
   const [notes, setNotes] = useState();
+  const [localization, setLocalization] = useState();
   const [saveNotes, setSaveNotes] = useState(false);
   const [assignEmployeeMenu, setAssignEmployeeMenu] = useState(null);
   const [assignEmployee, setAssignEmployee] = useState('');
@@ -82,6 +86,8 @@ const OrderDetails = () => {
   const [customer, setCustomer] = useState('');
   const [signature, setSignature] = useState('');
   const [changeSignature, setChangeSignature] = useState(false);
+  const [changeCustomer, setChangeCustomer] = useState(false);
+  const [changeLocalization, setChangeLocalization] = useState(false);
   const [fileUploadModal, setFileUploadModal] = useState(false);
   const [file, setFile] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -109,6 +115,8 @@ const OrderDetails = () => {
       setNotes(singleOrderDetails.notes);
       setPickupDate(singleOrderDetails.pickupDate || null);
       setAssignEmployee(singleOrderDetails.employeeDriver || null);
+      setCustomer(singleOrderDetails.customer);
+      setLocalization(singleOrderDetails.localization);
     });
   }, []);
 
@@ -120,6 +128,7 @@ const OrderDetails = () => {
       employeeDriver: assignEmployee || null,
       customer: customer || orderDetail.customer,
       signature: changeSignature ? signature : orderDetail.signature,
+      localization: localization || orderDetail.localization,
     });
   };
 
@@ -179,6 +188,8 @@ const OrderDetails = () => {
   if (!usersList && !customersList && !customers && !specialDrivers)
     return null;
 
+  console.log(customer);
+
   return (
     <div>
       <MainWrapper>
@@ -218,33 +229,62 @@ const OrderDetails = () => {
               </div>
             </div>
             <Typography className={classes.label} variant="body1">
+              Osoba odpowiedzialna
+            </Typography>
+            <Typography gutterBottom variant="body2">
+              {usersList[orderDetail.employee]}
+            </Typography>
+            <Typography className={classes.label} variant="body1">
+              Data utworzenia
+            </Typography>
+            <Typography gutterBottom variant="body2">
+              {moment(orderDetail.createDate).format('DD MMM YYYY')}
+            </Typography>
+            <Typography className={classes.label} variant="body1">
               Zleceniodawca
             </Typography>
-            <Typography gutterBottom variant="body2" component="div">
-              {customersList[orderDetail.customer]}
-              <Autocomplete
-                options={customers}
-                getOptionLabel={(option) => option.companyName}
-                onChange={(e, newValue) =>
-                  setCustomer(newValue && newValue.customerId)
-                }
-                openOnFocus
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Zleceniodawca"
-                    value={customer}
-                    style={{ maxWidth: 300 }}
-                  />
-                )}
-              />
-            </Typography>
+            <div className={classes.inlineDisplay}>
+              {changeCustomer ? (
+                <Autocomplete
+                  options={customers}
+                  getOptionLabel={(option) => option.companyName}
+                  onChange={(e, newValue) =>
+                    setCustomer(newValue && newValue.customerId)
+                  }
+                  fullWidth
+                  openOnFocus
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      size="small"
+                      value={customer}
+                    />
+                  )}
+                />
+              ) : (
+                <Typography gutterBottom variant="body2">
+                  {customersList[orderDetail.customer]}
+                </Typography>
+              )}
+              <Button
+                variant="text"
+                color="primary"
+                size="small"
+                onClick={() => setChangeCustomer(!changeCustomer)}
+              >
+                {changeCustomer ? 'Anuluj' : 'Zmień'}
+              </Button>
+            </div>
             <Typography className={classes.label} variant="body1">
               Sygnatura sprawy
             </Typography>
             <div className={classes.inlineDisplay}>
               {changeSignature ? (
                 <TextField
+                  variant="outlined"
+                  size="small"
+                  fullWidth
                   value={signature}
                   onChange={(e) => setSignature(e.target.value)}
                 />
@@ -263,28 +303,17 @@ const OrderDetails = () => {
               </Button>
             </div>
             <Typography className={classes.label} variant="body1">
-              Data utworzenia
-            </Typography>
-            <Typography gutterBottom variant="body2">
-              {moment(orderDetail.createDate).format('DD MMM YYYY')}
-            </Typography>
-            <Typography className={classes.label} variant="body1">
               Data odbioru
             </Typography>
             <FormGroup className={classes.inlineDisplay}>
-              <MuiPickersUtilsProvider utils={MomentUtils} locale="pl">
-                <KeyboardDatePicker
-                  format="DD MMM YYYY"
-                  value={pickupDate}
-                  onChange={(date) => setPickupDate(moment(date).format())}
-                  KeyboardButtonProps={{
-                    'aria-label': 'Zmień datę',
-                  }}
-                />
-              </MuiPickersUtilsProvider>
-              <IconButton size="small" onClick={() => setPickupDate(null)}>
-                <Clear />
-              </IconButton>
+              <DatePicker
+                format="DD MMM YYYY"
+                value={pickupDate}
+                onChange={(date) => setPickupDate(moment(date).format())}
+                inputVariant="outlined"
+                size="small"
+                fullWidth
+              />
             </FormGroup>
             <Typography className={classes.label} variant="body1">
               Odbiorca
@@ -306,16 +335,43 @@ const OrderDetails = () => {
               </Button>
             </Typography>
             <Typography className={classes.label} variant="body1">
-              Osoba odpowiedzialna
+              Lokalizacja
             </Typography>
-            <Typography gutterBottom variant="body2">
-              {usersList[orderDetail.employee]}
+            <div className={classes.inlineDisplay}>
+              {changeLocalization ? (
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  value={localization}
+                  onChange={(e) => setLocalization(e.target.value)}
+                />
+              ) : (
+                <Typography gutterBottom variant="body2">
+                  {orderDetail.localization}
+                </Typography>
+              )}
+              <Button
+                variant="text"
+                color="primary"
+                size="small"
+                onClick={() => setChangeLocalization(!changeLocalization)}
+              >
+                {changeLocalization ? 'Anuluj' : 'Zmień'}
+              </Button>
+            </div>
+            <Typography className={classes.label} variant="body1">
+            Dodatkowe informacje / notatki
             </Typography>
             <TextField
-              label="dodatkowe informacje"
+              variant="outlined"
+              size="small"
+              multiline
+              fullWidth
+              rows="5"
+              rowsMax="5"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              style={{ marginTop: 25 }}
             />
             <div className={classes.actionFooter}>
               <Button
