@@ -143,7 +143,6 @@ const SideMenu = ({ menuOpen }) => {
               component={NavLink}
               to="/kalendarz"
               activeClassName={classes['Mui-selectedd']}
-              style={{ display: 'none' }}
             >
               <ListItemIcon>
                 <Today />

@@ -1,9 +1,9 @@
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
-import { IconButton, makeStyles, Paper, Typography } from '@material-ui/core';
 import moment from 'moment';
-import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
-import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { Notes } from '@material-ui/icons';
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -13,166 +13,74 @@ const useStyles = makeStyles((theme) => ({
   heading: {
     fontWeight: 'bold',
   },
-  calendar: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    gridTemplateRows: '40px repeat(5, 100px)',
-    gridTemplateAreas: `'header header header header header header header'
-    '. . . . . . .'
-    '. . . . . . .'
-    '. . . . . . .'
-    `,
-    gridGap: 1,
-    border: '1px solid black',
-    backgroundColor: 'black',
-    '& > div:not(:first-child)': {
-      padding: 5,
-      backgroundColor: 'white',
-    },
-  },
-  calendar4Rows: {
-    gridTemplateRows: '40px repeat(4, 100px)',
-  },
-  calendar6Rows: {
-    gridTemplateRows: '40px repeat(6, 100px)',
-  },
-  calendarHeader: {
-    display: 'grid',
-    gridColumn: '100%',
-    gridArea: 'header',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    '& > span': {
-      backgroundColor: 'white',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      textTransform: 'uppercase',
-    },
-  },
-  monthCalendarControl: {
+  calendar: {},
+  calendarWeek: {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: 16,
   },
-  iconSmall: {
-    fontSize: 16,
+  calendarDay: {
+    position: 'relative',
+    padding: 6,
+    width: 120,
+    height: 120,
+    border: '1px solid black',
   },
-  emptyDay: {
-    backgroundColor: '#333',
+  calendarLabel: {
+    textTransform: 'uppercase',
+    width: 120,
+    textAlign: 'center',
+    fontSize: '0.8rem',
+    color: theme.palette.grey[400],
+  },
+  outOfCurrentMonth: {
+    color: theme.palette.grey[400],
+  },
+  dayLabel: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    opacity: '0.05',
+    lineHeight: 'normal',
+    fontSize: 60,
+    zIndex: 0,
+    cursor: 'default',
+  },
+  dayContent: {
+    zIndex: 1,
+  },
+  dayContentInfo: {
+    '& > *': {
+      fontSize: 10,
+    },
   },
 }));
 
 const Calendar = () => {
   const classes = useStyles();
+
   const today = moment();
-  const actualMonthNo = today.startOf('month');
-  const [dateMonthView, setDateMonthView] = useState(actualMonthNo);
-  const [calendarFourRows, setCalendarFourRows] = useState(false);
-  const [calendarSixRows, setCalendarSixRows] = useState(false);
-  const [spanLength, setSpanLength] = useState(0);
+  const startDay = today.clone().startOf('month').startOf('week').isoWeekday(2);
+  const endDay = today.clone().endOf('month').endOf('week');
+  const day = startDay.clone().subtract(2, 'day');
+  const calendar = [];
 
-  const daysInMonth = dateMonthView.daysInMonth();
+  const weekDaysLabels = [
+    'Poniedziałek',
+    'Wtorek',
+    'Środa',
+    'Czwartek',
+    'Piątek',
+    'Sobota',
+    'Niedizela',
+  ];
 
-  const changeMonthView = (direction) => {
-    const val =
-      direction === 'next'
-        ? moment(dateMonthView).clone().add(1, 'month')
-        : moment(dateMonthView).clone().subtract(1, 'month');
-    setDateMonthView(val);
-    const firstDay = parseInt(val.format('d'));
-    const spanLengthVal = firstDay === 0 ? 6 : firstDay - 1;
-    setSpanLength(spanLengthVal);
-    setCalendarFourRows(spanLengthVal + val.daysInMonth() <= 28);
-    setCalendarSixRows(spanLengthVal + val.daysInMonth() > 35);
-  };
-
-  const generateCalendarSpanStart = () => {
-    const firstDay = parseInt(dateMonthView.format('d'));
-    if (firstDay === 0) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-    if (firstDay === 1) {
-      return;
-    }
-    if (firstDay === 2) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-    if (firstDay === 3) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-    if (firstDay === 4) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-    if (firstDay === 5) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-    if (firstDay === 6) {
-      return (
-        <>
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-          <div className={classes.emptyDay} />
-        </>
-      );
-    }
-  };
-
-  const generateCalendarSpanEnd = () => {
-    const sum = spanLength + daysInMonth;
-    let spanEnd = 0;
-    if (sum > 28 && sum <= 35) {
-      spanEnd = 35 - sum;
-    } else if (sum > 35) {
-      spanEnd = 42 - sum;
-    }
-    return [...Array(spanEnd).keys()];
-  };
-
-  const generateCalendarDays = () => {
-    const monthArray = [];
-    for (let i = 0; i < daysInMonth; i++) {
-      monthArray.push(i + 1);
-    }
-    return monthArray;
-  };
-
-  const renderCalendarDays = () => {
-    return generateCalendarDays().map((day) => <div key={day}>{day}</div>);
-  };
+  while (day.isBefore(endDay, 'day')) {
+    calendar.push(
+      Array(7)
+        .fill(0)
+        .map(() => day.add(1, 'day').clone())
+    );
+  }
 
   return (
     <MainWrapper>
@@ -185,39 +93,52 @@ const Calendar = () => {
         Kalendarz
       </Typography>
       <Paper className={classes.paper}>
-        <div className={classes.monthCalendarControl}>
-          <Typography variant="h5">
-            {dateMonthView.format('MMMM YYYY')}
-          </Typography>
-          <IconButton onClick={() => changeMonthView('prev')}>
-            <ArrowBackIos className={classes.iconSmall} />
-          </IconButton>
-          <IconButton onClick={() => changeMonthView('next')}>
-            <ArrowForwardIos className={classes.iconSmall} />
-          </IconButton>
-        </div>
-        <div
-          className={clsx(classes.calendar, {
-            [classes.calendar4Rows]: calendarFourRows,
-            [classes.calendar6Rows]: calendarSixRows,
-          })}
-        >
-          <div className={classes.calendarHeader}>
-            <span>Poniedziałek</span>
-            <span>Wtorek</span>
-            <span>Środa</span>
-            <span>Czwartek</span>
-            <span>Piątek</span>
-            <span>Sobota</span>
-            <span>Niedziela</span>
+        <div className={classes.calendar}>
+          <div className={classes.calendarWeek}>
+            {weekDaysLabels.map((label) => (
+              <div className={classes.calendarLabel}>{label}</div>
+            ))}
           </div>
-          {generateCalendarSpanStart()}
-          {renderCalendarDays()}
-          {generateCalendarSpanEnd().map((day) => (
-            <div key={day} className={classes.emptyDay} />
+          {calendar.map((week) => (
+            <div className={classes.calendarWeek}>
+              {week.map((day) => {
+                if (
+                  day.isBefore(today.clone().startOf('month')) ||
+                  day.isAfter(today.clone().endOf('month'))
+                ) {
+                  return (
+                    <div
+                      className={clsx(
+                        classes.calendarDay,
+                        classes.outOfCurrentMonth
+                      )}
+                    >
+                      {day.format('D').toString()}
+                    </div>
+                  );
+                }
+                return (
+                  <div className={classes.calendarDay}>
+                    <div className={classes.dayLabel}>
+                      {day.format('D').toString()}
+                    </div>
+                    <div className={classes.dayContent}>
+                      <div className={classes.dayContentInfo}>
+                        <Typography variant="body2">Za: 1</Typography>
+                        <Typography variant="body2">Od: 1</Typography>
+                        <Typography variant="body2">Do: 5</Typography>
+                        <Typography variant="body2">Pnd: 5</Typography>
+                      </div>
+                      <div className={classes.dayCOntentNotes}>
+                        <Notes />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ))}
         </div>
-        {moment(5, 'DD').format('d, DD-MM-YYYY HH:mm')}
       </Paper>
     </MainWrapper>
   );

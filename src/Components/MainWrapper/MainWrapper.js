@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
 
 const MainWrapper = ({ children }) => {
   const classes = useStyles();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(true);
 
   const toggleMenuOpen = () => setMenuOpen(!menuOpen);
 
