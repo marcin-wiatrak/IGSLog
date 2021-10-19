@@ -103,7 +103,7 @@ const OrdersTable = ({ tab, disableFilter }) => {
   const [filterStatus, setFilterStatus] = useState('');
   const [usersFilter, setUsersFilter] = useState('');
   const [sortingType, setSortingType] = useState('id');
-  const [sortingDirection, setSortingDirection] = useState('asc');
+  const [sortingDirection, setSortingDirection] = useState('desc');
 
   const { orders, customersList, specialDrivers, usersList, rawUsersList } =
     useContext(DataContext);
