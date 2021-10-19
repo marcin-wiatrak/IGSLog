@@ -21,13 +21,8 @@ import fireDB, { storage } from '../Firebase';
 import MainWrapper from '../Components/MainWrapper/MainWrapper';
 import moment from 'moment';
 import { Alert, Autocomplete } from '@material-ui/lab';
-import {
-  DatePicker,
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider
-} from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-import { AttachFile, Clear } from '@material-ui/icons';
+import { DatePicker } from '@material-ui/pickers';
+import { AttachFile } from '@material-ui/icons';
 import { DataContext } from '../Data';
 
 const useStyles = makeStyles((theme) => ({
@@ -217,13 +212,21 @@ const OrderDetails = () => {
                     }
                   />
                 </IconButton>
-                {!orderDetail.attachmentLink && (
+                {!orderDetail.attachmentLink ? (
                   <Button
                     variant="outlined"
                     color="primary"
                     onClick={openFileUploadModal}
                   >
                     Dodaj
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => setAttachmentLink('')}
+                  >
+                    Usuń
                   </Button>
                 )}
               </div>
@@ -361,7 +364,7 @@ const OrderDetails = () => {
               </Button>
             </div>
             <Typography className={classes.label} variant="body1">
-            Dodatkowe informacje / notatki
+              Dodatkowe informacje / notatki
             </Typography>
             <TextField
               variant="outlined"
