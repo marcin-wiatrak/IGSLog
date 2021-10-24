@@ -21,15 +21,7 @@ const Root = () => {
 
   return (
     <Switch>
-      <Route
-        exact
-        path="/"
-        render={() => (
-          <Redirect
-            to={localStorage.getItem('authToken') ? '/dashboard' : '/login'}
-          />
-        )}
-      />
+      <Route exact path="/" render={() => <Redirect to={'/login'} />} />
       <Route exact path="/dashboard" component={Dashboard} />
       <PrivateRoute
         exact
