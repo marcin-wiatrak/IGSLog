@@ -12,12 +12,15 @@ const PrivateRoute = ({
 }) => {
   const { currentUserProfile, dataReady } = useContext(DataContext);
   const { currentUser } = useContext(AuthContext);
-  return currentUser &&
+  return (
+    currentUser &&
     dataReady &&
-    checkPermissions(permission, currentUserProfile.permissions) ? (
-    <Route {...rest} render={(props) => <Component {...props} {...params} />} />
-  ) : (
-    <Redirect to="/" />
+    checkPermissions(permission, currentUserProfile.permissions) && (
+      <Route
+        {...rest}
+        render={(props) => <Component {...props} {...params} />}
+      />
+    )
   );
 };
 
