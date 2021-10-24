@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import fireDB from './Firebase';
-import moment from 'moment';
 
 export const AuthContext = React.createContext();
 
@@ -10,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const lsUser = localStorage.getItem('authToken');
 
   useEffect(() => {
+    if (!lsUser) fireDB.auth().signOut();
     fireDB.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
       if (user) setLocalStorage(user);
@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
 
   const setLocalStorage = (user) => {
     localStorage.setItem('authToken', user.uid);
-    localStorage.setItem('logout', moment().add(30, 'minutes').format());
   };
 
   if (pending) {

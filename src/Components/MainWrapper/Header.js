@@ -170,7 +170,7 @@ const Header = ({ history, toggleMenuOpen, menuOpen }) => {
           </Grid>
         </Grid>
       </Toolbar>
-      <Modal open={modalOpen} disableBackdropClick>
+      <Modal open={modalOpen}>
         <Paper className={classes.paper}>
           <Typography variant="h5" gutterBottom>
             Zostałeś wylogowany
