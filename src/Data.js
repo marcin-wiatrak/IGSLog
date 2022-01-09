@@ -9,6 +9,7 @@ export const DataProvider = ({ children }) => {
   const [customers, setCustomers] = useState();
   const [customersList, setCustomersList] = useState();
   const [orders, setOrders] = useState();
+  const [holidays, setHolidays] = useState();
   const [specialDrivers, setSpecialDrivers] = useState();
   const [rawUsersList, setRawUsersList] = useState();
   const [currentUserProfile, setCurrentUserProfile] = useState();
@@ -23,6 +24,7 @@ export const DataProvider = ({ children }) => {
       getCustomers();
       getUsers();
       getSpecialDrivers();
+      getHolidays();
     }
   }, [currentUser]);
 
@@ -43,6 +45,19 @@ export const DataProvider = ({ children }) => {
         ordersList.push({ docId: id, ...ordersData[id] });
       }
       setOrders(ordersList);
+    });
+  };
+
+  const getHolidays = async () => {
+    const holidaysRef = fireDB.database().ref('Calendar');
+    await holidaysRef.on('value', (snapshot) => {
+      const holidaysData = snapshot.val();
+      const holidaysList = [];
+      for (let id in holidaysData) {
+        holidaysList.push({ docId: id, ...holidaysData[id] });
+      }
+      console.log(holidaysList);
+      setHolidays(holidaysList);
     });
   };
 
@@ -101,7 +116,8 @@ export const DataProvider = ({ children }) => {
       customersList &&
       orders &&
       specialDrivers &&
-      currentUserProfile
+      currentUserProfile &&
+      holidays
     ) {
       setDataReady(true);
     }
@@ -112,6 +128,7 @@ export const DataProvider = ({ children }) => {
     orders,
     specialDrivers,
     currentUserProfile,
+    holidays,
   ]);
 
   // if (!dataReady) return <>Ładowanie danych...</>;
@@ -127,6 +144,7 @@ export const DataProvider = ({ children }) => {
         rawUsersList,
         currentUserProfile,
         dataReady,
+        holidays,
       }}
     >
       {children}
